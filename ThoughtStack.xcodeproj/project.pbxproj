@@ -13,6 +13,7 @@
 		164C7A40239A56E20051088E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 164C7A3F239A56E20051088E /* Assets.xcassets */; };
 		164C7A43239A56E20051088E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 164C7A41239A56E20051088E /* LaunchScreen.storyboard */; };
 		164C7A4E239A56E20051088E /* ThoughtStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164C7A4D239A56E20051088E /* ThoughtStackTests.swift */; };
+		164C7A59239A57B70051088E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 164C7A58239A57B70051088E /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +37,7 @@
 		164C7A49239A56E20051088E /* ThoughtStackTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ThoughtStackTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		164C7A4D239A56E20051088E /* ThoughtStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThoughtStackTests.swift; sourceTree = "<group>"; };
 		164C7A4F239A56E20051088E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		164C7A58239A57B70051088E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +79,7 @@
 		164C7A37239A56E10051088E /* ThoughtStack */ = {
 			isa = PBXGroup;
 			children = (
+				164C7A58239A57B70051088E /* GoogleService-Info.plist */,
 				164C7A38239A56E10051088E /* AppDelegate.swift */,
 				164C7A3A239A56E10051088E /* ViewController.swift */,
 				164C7A3C239A56E10051088E /* Main.storyboard */,
@@ -178,6 +181,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				164C7A43239A56E20051088E /* LaunchScreen.storyboard in Resources */,
+				164C7A59239A57B70051088E /* GoogleService-Info.plist in Resources */,
 				164C7A40239A56E20051088E /* Assets.xcassets in Resources */,
 				164C7A3E239A56E10051088E /* Main.storyboard in Resources */,
 			);
