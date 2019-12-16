@@ -21,15 +21,15 @@ struct Post
     //var image:Int = -1
     var likesCount:Int = -1
     
-//    init(pid:String, author:String,category:String, image:String,owner: String,likes: [String],quote: String,likesCount:Int) {
-//        self.pid = pid
+//    init(author:String,category:String, image:String,owner: String,quote: String) {
+////        self.pid = pid
 //        self.author = author
 //        self.category = category
 //        self.image = image
 //        self.owner = owner
 //        self.quote = quote
-//        self.likesCount = likesCount
-//        
+////        self.likesCount = likesCount
+//
 //    }
     
     }

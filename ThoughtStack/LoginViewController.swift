@@ -19,6 +19,10 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func login(_ sender: Any) {
+        guard let userUid = Auth.auth().currentUser?.uid else { return }
+        print(userUid)
+        UserDefaults.standard.set(userUid, forKey: "uid")
+        
         
         
         if self.email.text == "" || self.password.text == "" {

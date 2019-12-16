@@ -96,8 +96,8 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="LOGIN"/>
                                 <connections>
-                                    <action selector="directToLogin:" destination="6d4-EA-tNu" eventType="touchUpInside" id="cdY-Uh-RTE"/>
-                                    <segue destination="BYZ-38-t0r" kind="show" id="d6w-Hf-0GJ"/>
+                                    <action selector="directToLogin:" destination="6d4-EA-tNu" eventType="touchUpInside" id="h5o-y5-5fj"/>
+                                    <segue destination="BYZ-38-t0r" kind="show" id="So6-Gm-eFv"/>
                                 </connections>
                             </button>
                             <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="LkB-6m-oeN">
@@ -114,6 +114,18 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oKU-X8-nq2">
+                                <rect key="frame" x="87" y="114" width="240" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="C6p-Ow-5v0">
+                                <rect key="frame" x="184" y="250" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="selectProfilePicture:" destination="6d4-EA-tNu" eventType="touchUpInside" id="Nof-Hj-EVq"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="N5G-Qs-4QO"/>
@@ -122,6 +134,7 @@
                         <outlet property="email" destination="LkB-6m-oeN" id="Gab-8S-flL"/>
                         <outlet property="name" destination="DNB-mV-bSr" id="p4K-Nu-7s5"/>
                         <outlet property="password" destination="MUA-d0-WQc" id="RgN-WO-RCY"/>
+                        <outlet property="profilePicture" destination="oKU-X8-nq2" id="gF0-8u-tEF"/>
                         <outlet property="username" destination="Z5P-wJ-VlY" id="DBJ-Ml-T6b"/>
                     </connections>
                 </viewController>
