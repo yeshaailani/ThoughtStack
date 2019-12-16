@@ -1,0 +1,123 @@
+//
+//  Utilities.swift
+//  ThoughtStack
+//
+//  Created by Vegeta on 12/7/19.
+//  Copyright © 2019 Yesha Ailani. All rights reserved.
+//
+
+import Foundation
+import UIKit
+
+class Utilities {
+    
+    static let singleton = Utilities()
+    private init(){}
+    
+    let userID = "oG7weadM3FHXhb9XyJBC"
+    var quoteImages = [
+        "cry-smile-over",
+        "guilty-of-not-do",
+          "life-10-90",
+          "quality-act-habit",
+          "slow-dont-matter-confucius",
+          "today-fun",
+          "well-done-well-said",
+    ]
+    
+    var quotes : [[String : String]] {
+        
+        var tempQuotes = [[String : String]]()
+        
+        let quoteText = [
+            "Dont cry because its over, smile because it happened",
+            "Every man is guilty of the good he did not do",
+            "Life is 10% what happens to you and 90% how you react to it.",
+            "Quality is not an act, it is a habit",
+            "It does not matter how slowly you go as long as you do not stop",
+            "Today is good, today is fun. Tommorow is another one.",
+            "Well done is better than well said"
+        ]
+        
+        let quoteAuthors = [
+        "Dr Seuss",
+        "Voltaire",
+        "Charles Swindoll",
+        "Aristotle",
+        "Confucius",
+        "Dr Seuss",
+        "Benjamin Franklin"
+        ]
+        
+        
+        let quoteCategories : [Categories] = [
+        .movies,
+        .philosophical,
+        .motivational,
+        .famous,
+        .motivational,
+        .famous,
+        .famous
+        ]
+        
+        
+        for (index,quoteText) in quoteText.enumerated()
+        {
+            let params : [String: String] = [
+                "quote" : quoteText,
+                "author" : quoteAuthors[index],
+                "category" : quoteCategories[index].rawValue,
+                "ownerId" : userID
+            ]
+            tempQuotes.append(params)
+        }
+        
+        return tempQuotes
+    }
+    
+    
+    func testFIR(){
+        
+        for (index,quote) in quotes.enumerated() {
+            
+            FirebaseService.shared.addPost(post: quote)
+        }
+        print("All quotes added successfully!")
+    }
+    
+    
+    
+    /*
+    func encodeImage(imageFile : UIImage) -> String{
+    
+    var imageData = imageFile.pngData() // check if image is png
+    
+    if imageData == nil {
+        imageData = imageFile.jpegData(compressionQuality: 0.2)
+    }
+    let base64image = imageData?.base64EncodedString() ?? ""
+    
+    if base64image.isEmpty == true {
+        print("Encoding failed!")
+    }
+    
+    return base64image
+}
+    */
+    
+    func getMockQuotes() -> [Post] {
+        
+        var posts = [Post]()
+        
+        for quote in quotes {
+            let currentPost = Post(parameters: quote)
+            posts.append(currentPost)
+        }
+        
+        return posts
+        
+    }
+    
+    
+}
+
