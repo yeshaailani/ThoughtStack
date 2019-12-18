@@ -26,9 +26,7 @@ class SignUpViewController: UIViewController {
     @IBAction func selectProfilePicture(_ sender: UIButton) {
         self.imagePicker.present(from: sender)
     }
-    
-
-    
+ 
     var database = Firestore.firestore()
 
     override func viewDidLoad() {
@@ -66,12 +64,7 @@ class SignUpViewController: UIViewController {
                         "profilePic": imageConv,
                         "eval": [],
                         "likes": []
-                        
-                       
-                        
-                        
-                        
-                        
+
                     ]) { err in
                         if let err = err {
                             print("Error adding document: \(err)")
@@ -87,14 +80,10 @@ class SignUpViewController: UIViewController {
 //                    var uid = ref.document().documentID
 //                    print(userRef)
                     
-                    
-                
-                    
                 } else {
                   message = "There was an error."
                 }
-                
-                
+
                 let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
                 alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
                 self.present(alertController, animated: true)

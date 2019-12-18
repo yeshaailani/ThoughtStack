@@ -65,6 +65,8 @@ class CreatePostViewController: UIViewController {
                 alertController.addAction(defaultAction)
                 
                 self.present(alertController, animated: true, completion: nil)
+                
+                
                 print("Document added with ref: \(ref)")
             }
         }
@@ -93,6 +95,17 @@ class CreatePostViewController: UIViewController {
         let imageString = imageConverter.ToBase64String(img: image)
         return imageString
 
+    }
+    
+    func showAlertBox(message:String)
+    {
+        let alertController = UIAlertController(title: "Success!", message: "Post Successfully uploaded!", preferredStyle: .alert)
+        
+        let defaultAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alertController.addAction(defaultAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+       
     }
 
 }//end class
