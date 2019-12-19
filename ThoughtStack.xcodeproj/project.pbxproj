@@ -12,13 +12,13 @@
 		164C7A43239A56E20051088E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 164C7A41239A56E20051088E /* LaunchScreen.storyboard */; };
 		164C7A4E239A56E20051088E /* ThoughtStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164C7A4D239A56E20051088E /* ThoughtStackTests.swift */; };
 		164C7A59239A57B70051088E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 164C7A58239A57B70051088E /* GoogleService-Info.plist */; };
-		9A66C2C3239DE07400637AD2 /* CustomOverlayView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A66C2C2239DE07400637AD2 /* CustomOverlayView.xib */; };
 		9A90A9B8239B1E790004EF08 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A90A9B7239B1E790004EF08 /* TabBar.swift */; };
 		9A90A9BA239B1FE80004EF08 /* CreatePost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A90A9B9239B1FE80004EF08 /* CreatePost.swift */; };
 		9AAB5050239AC38400BA5453 /* Dashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAB504F239AC38400BA5453 /* Dashboard.swift */; };
 		9AAB5052239AC3D200BA5453 /* ThoughtWallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAB5051239AC3D200BA5453 /* ThoughtWallet.swift */; };
 		9AAB5054239AC40000BA5453 /* Feed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAB5053239AC40000BA5453 /* Feed.swift */; };
 		9AAB5056239AC43D00BA5453 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAB5055239AC43D00BA5453 /* Models.swift */; };
+		9AD3447823AAD01200A2599E /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD3447723AAD01200A2599E /* Card.swift */; };
 		9AFB0EF5239C39BA00172494 /* FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFB0EF4239C39BA00172494 /* FirebaseService.swift */; };
 		9AFB0EF7239C56E700172494 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFB0EF6239C56E700172494 /* Utilities.swift */; };
 		A4EA3B1E3EC130962C094987 /* Pods_ThoughtStackTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAA453185E5B418D6115E929 /* Pods_ThoughtStackTests.framework */; };
@@ -49,13 +49,13 @@
 		2F835F4BA364CDC71FE24FB9 /* Pods-ThoughtStackTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThoughtStackTests.debug.xcconfig"; path = "Target Support Files/Pods-ThoughtStackTests/Pods-ThoughtStackTests.debug.xcconfig"; sourceTree = "<group>"; };
 		52FFDA9AAA758328D40ADDAC /* Pods-ThoughtStack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThoughtStack.debug.xcconfig"; path = "Target Support Files/Pods-ThoughtStack/Pods-ThoughtStack.debug.xcconfig"; sourceTree = "<group>"; };
 		8C93A429CFAB74EF1C33A28B /* Pods-ThoughtStack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThoughtStack.release.xcconfig"; path = "Target Support Files/Pods-ThoughtStack/Pods-ThoughtStack.release.xcconfig"; sourceTree = "<group>"; };
-		9A66C2C2239DE07400637AD2 /* CustomOverlayView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomOverlayView.xib; sourceTree = "<group>"; };
 		9A90A9B7239B1E790004EF08 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		9A90A9B9239B1FE80004EF08 /* CreatePost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePost.swift; sourceTree = "<group>"; };
 		9AAB504F239AC38400BA5453 /* Dashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard.swift; sourceTree = "<group>"; };
 		9AAB5051239AC3D200BA5453 /* ThoughtWallet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThoughtWallet.swift; sourceTree = "<group>"; };
 		9AAB5053239AC40000BA5453 /* Feed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feed.swift; sourceTree = "<group>"; };
 		9AAB5055239AC43D00BA5453 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		9AD3447723AAD01200A2599E /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		9AFB0EF4239C39BA00172494 /* FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseService.swift; sourceTree = "<group>"; };
 		9AFB0EF6239C56E700172494 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		D362D8748769026B271B5A71 /* Pods_ThoughtStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ThoughtStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -110,6 +110,7 @@
 				164C7A3F239A56E20051088E /* Assets.xcassets */,
 				164C7A41239A56E20051088E /* LaunchScreen.storyboard */,
 				164C7A44239A56E20051088E /* Info.plist */,
+				9AD3447723AAD01200A2599E /* Card.swift */,
 				9AAB504F239AC38400BA5453 /* Dashboard.swift */,
 				9AAB5051239AC3D200BA5453 /* ThoughtWallet.swift */,
 				9AAB5053239AC40000BA5453 /* Feed.swift */,
@@ -118,7 +119,6 @@
 				9A90A9B9239B1FE80004EF08 /* CreatePost.swift */,
 				9AFB0EF4239C39BA00172494 /* FirebaseService.swift */,
 				9AFB0EF6239C56E700172494 /* Utilities.swift */,
-				9A66C2C2239DE07400637AD2 /* CustomOverlayView.xib */,
 			);
 			path = ThoughtStack;
 			sourceTree = "<group>";
@@ -237,7 +237,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				164C7A43239A56E20051088E /* LaunchScreen.storyboard in Resources */,
-				9A66C2C3239DE07400637AD2 /* CustomOverlayView.xib in Resources */,
 				164C7A59239A57B70051088E /* GoogleService-Info.plist in Resources */,
 				164C7A40239A56E20051088E /* Assets.xcassets in Resources */,
 			);
@@ -328,6 +327,7 @@
 				164C7A39239A56E10051088E /* AppDelegate.swift in Sources */,
 				9A90A9BA239B1FE80004EF08 /* CreatePost.swift in Sources */,
 				9AFB0EF7239C56E700172494 /* Utilities.swift in Sources */,
+				9AD3447823AAD01200A2599E /* Card.swift in Sources */,
 				9AAB5056239AC43D00BA5453 /* Models.swift in Sources */,
 				9A90A9B8239B1E790004EF08 /* TabBar.swift in Sources */,
 			);
@@ -485,16 +485,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = VMK4TWSMGH;
+				DEVELOPMENT_TEAM = 528APPPP7Z;
 				INFOPLIST_FILE = ThoughtStack/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.ThoughtStack;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sdsu.ThoughtStack;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -504,16 +504,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = VMK4TWSMGH;
+				DEVELOPMENT_TEAM = 528APPPP7Z;
 				INFOPLIST_FILE = ThoughtStack/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.ThoughtStack;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sdsu.ThoughtStack;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

@@ -14,20 +14,10 @@ class Utilities {
     static let singleton = Utilities()
     private init(){}
     
-    let userID = "oG7weadM3FHXhb9XyJBC"
-    var quoteImages = [
-        "cry-smile-over",
-        "guilty-of-not-do",
-          "life-10-90",
-          "quality-act-habit",
-          "slow-dont-matter-confucius",
-          "today-fun",
-          "well-done-well-said",
-    ]
-    
-    var quotes : [[String : String]] {
+    lazy var quotes : [[String:String]]  =  {
         
         var tempQuotes = [[String : String]]()
+        let userID = "oG7weadM3FHXhb9XyJBC"
         
         let quoteText = [
             "Dont cry because its over, smile because it happened",
@@ -73,45 +63,53 @@ class Utilities {
         }
         
         return tempQuotes
-    }
+    }()
+    
+    
+    var quoteImages = [
+               "cry-smile-over",
+               "guilty-of-not-do",
+                 "life-10-9011",
+                 "quality-act-habit11",
+                 "slow-dont-matter-confucius",
+                 "today-fun",
+                 "well-done-well-said",
+           ]
     
     
     func testFIR(){
-        
+       
+        print("Going to test \(quotes.count) quotes")
         for (index,quote) in quotes.enumerated() {
-            
-            FirebaseService.shared.addPost(post: quote)
+            FirebaseService.shared.addPost(post: quote,optionalImage: UIImage(named: quoteImages[index])!)
         }
-        print("All quotes added successfully!")
+        
     }
     
     
-    
-    /*
-    func encodeImage(imageFile : UIImage) -> String{
-    
-    var imageData = imageFile.pngData() // check if image is png
-    
-    if imageData == nil {
-        imageData = imageFile.jpegData(compressionQuality: 0.2)
-    }
-    let base64image = imageData?.base64EncodedString() ?? ""
-    
-    if base64image.isEmpty == true {
-        print("Encoding failed!")
+    func getTimeStamp(date : Date) -> String {
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone.current
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ssss"
+        let dateString = formatter.string(from: date)
+        return dateString
     }
     
-    return base64image
-}
-    */
     
     func getMockQuotes() -> [Post] {
         
         var posts = [Post]()
         
-        for quote in quotes {
-            let currentPost = Post(parameters: quote)
-            posts.append(currentPost)
+        var mockUserName = "prabhu150", mockProfilePic = UIImage(named: "goku")
+        
+        for (index,quote) in quotes.enumerated()
+        {
+            var currPost = Post(parameters: quote)
+            currPost.image = UIImage(named: quoteImages[index])
+            currPost.postOwnerUserName = mockUserName
+            currPost.postOwnerProfilePic = mockProfilePic
+            currPost.numLikes = Int(arc4random_uniform(UInt32(20)))
+            posts.append(currPost)
         }
         
         return posts

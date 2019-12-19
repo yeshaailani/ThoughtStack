@@ -16,19 +16,22 @@ class FirebaseService {
     
     private init(){}
     static let shared =  FirebaseService()
-    let testBranch = "test-abhi/"
+    
+    
     
     func configure(){
         FirebaseApp.configure()
     }
     
     private func reference(to tableref : TableReferences) -> CollectionReference{
-        return Firestore.firestore().collection(tableref.rawValue)
+        let val = Firestore.firestore().collection(tableref.rawValue)
+        return val
     }
     
     private func storage(to storage : StorageReferences) -> StorageReference
     {
-        return Storage.storage().reference(withPath: storage.rawValue)
+        let val = Storage.storage().reference(withPath: storage.rawValue)
+        return val
     }
     
     func addUser(params : [String : Any]) {
@@ -44,21 +47,157 @@ class FirebaseService {
         
     }
     
-    func addPost(post data : [String : Any]){
+    func addPost(post: [String : Any],optionalImage : UIImage? = nil){
         
-        // check if post contains an image, if it does call following line inside
-        // successful completion handler part.
-        reference(to: .posts).addDocument(data: data)
+        var data = post
+        
+        if let image = optionalImage {
+            self.uploadPostImage(image: image, completion: {error,downloadURL in
+                
+                if let _ = error {
+                    print(error?.localizedDescription)
+                    return
+                }
+                
+                print("sending quote with image")
+                
+                if downloadURL != nil
+                {
+                    data["imageURL"] = downloadURL
+                    self.reference(to: .posts).addDocument(data: data)
+                    print("Added post with an image! \(downloadURL)")
+                }
+                
+            })
+        }else
+        {
+            print("Added post without any image!")
+            self.reference(to: .posts).addDocument(data: data)
+        }
+        
+    }
+    
+    private func uploadPostImage(image: UIImage, completion: @escaping (Error?,String?) -> Void){
+        
+        
+       let pngData = image.pngData() // get pngdata
+       let jpgData = image.jpegData(compressionQuality: 0.2) // get jpgdata
+       let data : Data
+       let ext : String
+        
+       var metadata = StorageMetadata()
+        
+        if let _ = pngData {
+            data = pngData!
+            ext = ".png"
+            
+            
+        }else if let _ = jpgData {
+            data = jpgData!
+            ext = ".jpg"
+            
+        }
+        else{
+            print("Unsupported file")
+            return
+        }
+        
+        metadata.contentType = ext
+        
+        let postsRef = storage(to: .posts).child(Date().millisecondsSince1970)
+        
+        let _ = postsRef.putData(data, metadata: metadata) { metadata,error in
+            
+            if let _ = error {
+                print("upload error",error?.localizedDescription)
+                completion(error,nil)
+                return
+            }
+            
+            guard let metadata = metadata else {
+              print("couldnt get metadata")
+              completion(error,nil)
+              return
+            }
+            
+            postsRef.downloadURL(completion: { downloadURL, error in
+                completion(error,downloadURL?.absoluteString)
+            })
+            
+        }
+            
+    }
+    
+    private func uploadProfilePicImage(image: UIImage, completion: @escaping (Error?,String?) -> Void){
+        let pngData = image.pngData() // get pngdata
+        let jpgData = image.jpegData(compressionQuality: 0.2) // get jpgdata
+        let data : Data
+        let ext : String
+         
+        var metadata = StorageMetadata()
+         
+         if let _ = pngData {
+             data = pngData!
+             ext = ".png"
+             
+             
+         }else if let _ = jpgData {
+             data = jpgData!
+             ext = ".jpg"
+             
+         }
+         else{
+             print("Unsupported file")
+             return
+         }
+         
+         metadata.contentType = ext
+         
+        let postsRef = storage(to: .profile_pics).child(Date().millisecondsSince1970)
+         
+         let _ = postsRef.putData(data, metadata: metadata) { metadata,error in
+             
+             if let _ = error {
+                 print("upload error",error?.localizedDescription)
+                 completion(error,nil)
+                 return
+             }
+             
+             guard let metadata = metadata else {
+               print("couldnt get metadata")
+               completion(error,nil)
+               return
+             }
+             
+             postsRef.downloadURL(completion: { downloadURL, error in
+                 completion(error,downloadURL?.absoluteString)
+             })
+             
+         }
     }
     
     
-    func getUserByID(userID : String){
+    func getAllPosts(userID : String) -> [Post] {
+
+        /*
+         Initially get all post ids. Then filter out
+         1. your post ids
+         2. evaluated post ids
+         
+         Finally get all posts loaded in the model.
+         
+         */
         
+        
+        var posts = [Post]()
+        
+        
+        
+        
+        return posts
     }
     
-    func uploadImage(completion: @escaping (Error?,String?) -> Void){
-        
-    }
+    
     
     
     /*
@@ -119,4 +258,14 @@ class FirebaseService {
     
     
     
+}
+
+extension Date {
+    var millisecondsSince1970:String {
+        return String(Int64((self.timeIntervalSince1970 * 1000.0).rounded()))
+    }
+
+    init(milliseconds:Int64) {
+        self = Date(timeIntervalSince1970: TimeInterval(milliseconds) / 1000)
+    }
 }

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import UIKit
 
 enum Categories : String {
     case motivational
@@ -21,7 +21,7 @@ enum Categories : String {
 
 class User {
 
-    var userID : Int?
+    var userID : String?
     let name : String
     let nickName : String
     let email : String
@@ -34,10 +34,13 @@ class User {
         name = parameters["name"] as? String ?? ""
         email = parameters["email"] as? String ?? ""
         nickName = parameters["nickName"] as? String ?? ""
-        profilePic = parameters["profilePic"] as? String
         evaluatedPosts = [String]()
         selfPosts = [String]()
         likes = [String]()
+    }
+    
+    func updateProfilePic(_ profilePic : String){
+        self.profilePic = profilePic
     }
         
 }
@@ -50,18 +53,24 @@ class Post {
     let author : String
     var category : String
     let imageURL : String?
-    let ownerID : Int
+    let ownerID : String
+    var image : UIImage?
+    var numLikes : Int
+    
+    // for convenience these two are in the model, this isnt reflected on backend
+    var postOwnerUserName : String?
+    var postOwnerProfilePic : UIImage?
     
     init(parameters : [String: String]) {
         quote = parameters["quote"] ?? ""
         author = parameters["author"] ?? ""
         category = parameters["category"] ?? ""
-        ownerID = Int(parameters["ownerId"] ?? "-1")!
+        ownerID = parameters["ownerId"] ?? "-1"
+        imageURL = nil
+        numLikes = 0
     }
     
-    func updateImageURL(_ url : String){
-        self.imageURL = url
-    }
+
 }
 
 enum StorageReferences : String {
