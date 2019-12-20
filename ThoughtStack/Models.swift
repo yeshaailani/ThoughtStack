@@ -69,7 +69,7 @@ class Post {
         category = parameters["category"] as? String ?? ""
         ownerID = parameters["ownerId"] as? String ?? "-1"
         numLikes = parameters["numLikes"] as? [String] ?? [String]() // check if numlikes are getting used
-        imageURL = parameters["imageURL"] as? String ?? ""
+        imageURL = parameters["imageURL"] as? String
     }
     
 

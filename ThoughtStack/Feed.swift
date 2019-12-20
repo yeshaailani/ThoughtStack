@@ -63,7 +63,7 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        Utilities.singleton.testFIR()
+//        Utilities.singleton.testFIR()
         kolodaView.delegate = self
         kolodaView.dataSource = self
         

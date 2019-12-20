@@ -30,7 +30,7 @@ class TabBar: UITabBarController {
         createPost.tabBarItem = UITabBarItem(title: "Create Post", image: UIImage(named: "plus-outline"), selectedImage: UIImage(named: "plus-filled"))
         
         
-        viewControllers = [feed,dashboard,createPost]
+        viewControllers = [dashboard,feed,createPost]
     }
     
     

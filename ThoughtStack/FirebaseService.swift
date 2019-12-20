@@ -326,6 +326,7 @@ class FirebaseService {
         let storage = Storage.storage()
         
         
+
         for post in posts {
                               
                 if post.imageURL == nil {
@@ -333,8 +334,8 @@ class FirebaseService {
                 }
                 
             imageDispatchGroup.enter()
-            
-            
+       
+
             storage.reference(forURL:post.imageURL!).getData(maxSize: 2*1024*1024, completion: {
                     data,error in
                     
@@ -350,6 +351,7 @@ class FirebaseService {
                 })
             
             
+    
             }
         
         print("Text retrieval complete!")
