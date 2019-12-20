@@ -81,7 +81,7 @@ class Utilities {
        
         print("Going to test \(quotes.count) quotes")
         for (index,quote) in quotes.enumerated() {
-            FirebaseService.shared.addPost(post: quote,optionalImage: UIImage(named: quoteImages[index])!)
+            FirebaseService.shared.addPost(post: quote,optionalImage: UIImage(named: quoteImages[index]))
         }
         
     }
@@ -100,15 +100,16 @@ class Utilities {
         
         var posts = [Post]()
         
-        var mockUserName = "prabhu150", mockProfilePic = UIImage(named: "goku")
+        let mockUserName = "prabhu150", mockProfilePic = UIImage(named: "goku")
         
         for (index,quote) in quotes.enumerated()
         {
-            var currPost = Post(parameters: quote)
+            let currPost = Post(parameters: quote)
             currPost.image = UIImage(named: quoteImages[index])
             currPost.postOwnerUserName = mockUserName
             currPost.postOwnerProfilePic = mockProfilePic
-            currPost.numLikes = Int(arc4random_uniform(UInt32(20)))
+//            currPost.numLikes = Int(arc4random_uniform(UInt32(20)))
+            currPost.numLikes = [String]()
             posts.append(currPost)
         }
         

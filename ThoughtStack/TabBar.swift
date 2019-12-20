@@ -20,18 +20,17 @@ class TabBar: UITabBarController {
         
         self.tabBar.barStyle = .black
         
-        Utilities.singleton.testFIR()
+        let feed = Feed(userId: "oG7weadM3FHXhb9XyJBC")
+        feed.tabBarItem = UITabBarItem(title: "Feed", image: UIImage(named: "grid-outline")!, selectedImage: UIImage(named: "grid-filled")!)
         
-        let firstVC = Dashboard()
-        firstVC.tabBarItem = UITabBarItem(title: "Dashboard", image: UIImage(named: "grid-outline")!, selectedImage: UIImage(named: "grid-filled")!)
+        let dashboard = Dashboard(userId: "oG7weadM3FHXhb9XyJBC") // TODO: take from persistent data later
+        dashboard.tabBarItem = UITabBarItem(title: "Dashboard", image: UIImage(named: "user-outline")!, selectedImage: UIImage(named: "user-filled")!)
         
-        let secondVC = CreatePost()
-        secondVC.tabBarItem = UITabBarItem(title: "Create Post", image: UIImage(named: "plus-outline"), selectedImage: UIImage(named: "plus-filled"))
+        let createPost = CreatePost()
+        createPost.tabBarItem = UITabBarItem(title: "Create Post", image: UIImage(named: "plus-outline"), selectedImage: UIImage(named: "plus-filled"))
         
-        let thirdVC = ThoughtWallet()
-        thirdVC.tabBarItem = UITabBarItem(title: "ThoughtWallet", image:UIImage(named: "wallet-outline")!, selectedImage: UIImage(named: "wallet-filled")!)
         
-        viewControllers = [firstVC,secondVC,thirdVC]
+        viewControllers = [feed,dashboard,createPost]
     }
     
     

@@ -1,23 +1,76 @@
-//
-//  FirebaseService.swift
-//  ThoughtStack
-//
-//  Created by Vegeta on 12/7/19.
-//  Copyright © 2019 Yesha Ailani. All rights reserved.
-//
-
+import UIKit
 import Foundation
 import Firebase
 import FirebaseFirestore
 import FirebaseCore
-import UIKit
 
-class FirebaseService {
+/*
+use merge:true for updating existing documents to reflect current data
+*/
+class User {
+
+    var userID : String?
+    let name : String
+    let nickName : String
+    let email : String
+    var profilePic : String?
+    var evaluatedPosts : [String]
+    var selfPosts : [String]
+    var likes : [String]
+
+    init(parameters : [String: Any]) {
+        name = parameters["name"] as? String ?? ""
+        email = parameters["email"] as? String ?? ""
+        nickName = parameters["nickName"] as? String ?? ""
+        evaluatedPosts = [String]()
+        selfPosts = [String]()
+        likes = [String]()
+    }
+        
+}
+
+class Post {
     
-    private init(){}
-    static let shared =  FirebaseService()
+    var postID : Int?
+    let quote : String
+    let author : String
+    var category : String
+    let imageURL : String?
+    let ownerID : String
+    var numLikes : Int // this is an array on the backend, which can be changed on client side to show all users that liked a certain post
+    
+    // for convenience these two are in the model, this isnt reflected on backend
+    var image : UIImage?
+    var postOwnerUserName : String?
+    var postOwnerProfilePic : UIImage?
+    
+    init(parameters : [String: String]) {
+        quote = parameters["quote"] ?? ""
+        author = parameters["author"] ?? ""
+        category = parameters["category"] ?? ""
+        ownerID = parameters["ownerId"] ?? "-1"
+        imageURL = nil
+        numLikes = 0
+    }
     
 
+}
+
+enum StorageReferences : String {
+    case profile_pics = "profile-pics/"
+    case posts = "posts/"
+}
+
+enum TableReferences : String {
+    case users = "Users"
+    case posts = "Posts"
+}
+
+class MockFirebase {
+    
+    private init(){self.configure()}
+    static let shared =  MockFirebase()
+    
     func configure(){
         FirebaseApp.configure()
     }
@@ -54,7 +107,7 @@ class FirebaseService {
             self.uploadPostImage(image: image, completion: {error,downloadURL in
                 
                 if let _ = error {
-                    print("upload post error" + (error?.localizedDescription ?? ""))
+                    print(error?.localizedDescription)
                     return
                 }
                 
@@ -64,7 +117,7 @@ class FirebaseService {
                 {
                     data["imageURL"] = downloadURL
                     self.reference(to: .posts).addDocument(data: data)
-                    print("Added post with an image! \(String(describing: downloadURL))")
+                    print("Added post with an image! \(downloadURL)")
                 }
                 
             })
@@ -84,7 +137,7 @@ class FirebaseService {
        let data : Data
        let ext : String
         
-        let metadata = StorageMetadata()
+       var metadata = StorageMetadata()
         
         if let _ = pngData {
             data = pngData!
@@ -108,12 +161,12 @@ class FirebaseService {
         let _ = postsRef.putData(data, metadata: metadata) { metadata,error in
             
             if let _ = error {
-                print("upload error",error?.localizedDescription ?? "")
+                print("upload error",error?.localizedDescription)
                 completion(error,nil)
                 return
             }
             
-            guard metadata != nil else {
+            guard let metadata = metadata else {
               print("couldnt get metadata")
               completion(error,nil)
               return
@@ -133,7 +186,7 @@ class FirebaseService {
         let data : Data
         let ext : String
          
-        let metadata = StorageMetadata()
+        var metadata = StorageMetadata()
          
          if let _ = pngData {
              data = pngData!
@@ -157,12 +210,12 @@ class FirebaseService {
          let _ = postsRef.putData(data, metadata: metadata) { metadata,error in
              
              if let _ = error {
-                 print("upload error",error?.localizedDescription ?? "")
+                 print("upload error",error?.localizedDescription)
                  completion(error,nil)
                  return
              }
              
-            guard metadata != nil else {
+             guard let metadata = metadata else {
                print("couldnt get metadata")
                completion(error,nil)
                return
@@ -176,66 +229,33 @@ class FirebaseService {
     }
     
     
-    func getAllPosts(userId : String, completion : @escaping ([Post]?,Error?) -> Void ) {
+    func getAllPosts(userId : String, completion: @escaping (Error?,[Post]?) -> Void) {
 
+        
+        reference(to:.posts).getDocuments() { (querySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err)")
+            } else {
+                    for document in querySnapshot!.documents {
+                        print("\(document.documentID) => \(document.data())")
+                    }
+                
+        }
+        
+        
         /*
          Initially get all post ids. Then filter out
          1. your post ids
          2. evaluated post ids
          
+
          Finally get all posts loaded in the model.
          */
         
-        reference(to: .posts).getDocuments(completion: { (querySnapshot, err) in
-        if let err = err {
-            print("Error getting documents: \(err)")
-            completion(nil,nil)
-        } else {
-            
-            var posts = [Post]()
-            
-            for document in querySnapshot!.documents {
-                let data = document.data()
-                
-                let post = Post(parameters: data) // see if it maps properly and find some way to attach postId
-                post.postID = document.documentID
-                posts.append(post)
-            }
-            print("Total quotes \(posts.count)")
-            completion(posts,nil)
-        }
-        })
         
-    }
-    
-    
-    func getCurrentUser(userId:String,completion: @escaping (User?,Error?) -> Void ){
         
-        reference(to: .users).document(userId).getDocument{ snapshot,error in
         
-            if error != nil || snapshot == nil {
-                print("error getting user",error?.localizedDescription ?? "")
-                completion(nil,error)
-                return
-            }
-            
-            else {
-                
-                let data = snapshot?.data()
-                
-                if data == nil {
-                    print("error getting user")
-                    completion(nil,nil)
-                    return
-                }
-                
-
-                let currentUser = User(parameters: data!)
-                print("User \(currentUser.name) found!")
-                completion(currentUser,nil)
-            }
         
-        }
         
     }
     
@@ -244,43 +264,20 @@ class FirebaseService {
          
          add post id to list of user's liked posts
          add post id to user's evaluated posts
+         
          add user id to list of post's likes
          
          */
         
-        reference(to: .users).document(userId).updateData([
-            UserFields.evaluatedPosts.rawValue : FieldValue.arrayUnion([postId]),
-            UserFields.likes.rawValue : FieldValue.arrayUnion([postId]),
-            ],completion: { error in
-                
-                if error != nil {
-                    print("Error adding post to likes/eval posts!")
-                    return
-                }
-                
-                print("User liked and evaluated post!")
-                
-                self.reference(to: .posts).document(postId).updateData([
-                    PostFields.likes.rawValue : FieldValue.arrayUnion([userId])
-                    ], completion: { error in
-                        
-                        
-                        if error != nil {
-                            print("Error adding user id to post likes")
-                            return
-                        }
-                        print("Post likes updated!")
-                })
-        })
-            
-    
     }
+    
     
     func userDislikedPost(userId:String, postId: String){
         /*
          add postID to user's list of evaluated posts
          */
     }
+    
     
     func userHitUndo(userId:String,postId: String){
         /*
@@ -296,110 +293,33 @@ class FirebaseService {
          */
     }
     
-    func getUsersPosts(userId : String, completion: @escaping ([Post]?,Error?)-> Void) {
+    func getUsersPosts(userId : String) -> [Post] {
         
         /*
         get all posts whose owner is userId
          */
         
-        reference(to: .posts).whereField(PostFields.ownerId.rawValue, isEqualTo: userId)
-            .getDocuments(completion: { (querySnapshot, err) in
-       if let err = err {
-           print("Error getting documents: \(err)")
-           completion(nil,nil)
-       } else {
-           
-           var posts = [Post]()
-           
-           for document in querySnapshot!.documents {
-               let data = document.data()
-               
-               let post = Post(parameters: data) // see if it maps properly and find some way to attach postId
-               post.postID = document.documentID
-               posts.append(post)
-           }
-           print("DashB: Total posts \(posts.count)")
-           print("Attaching images...")
-        
-       
-        let imageDispatchGroup = DispatchGroup()
-        let storage = Storage.storage()
-        
-        
-        for post in posts {
-                              
-                if post.imageURL == nil {
-                    continue // no image for current post
-                }
-                
-            imageDispatchGroup.enter()
-            
-            
-            storage.reference(forURL:post.imageURL!).getData(maxSize: 2*1024*1024, completion: {
-                    data,error in
-                    
-                    if error != nil || data == nil {
-                        print("error attaching image to post",error?.localizedDescription ?? "")
-                        return
-                    }
-                    
-                    print("Attached image for post with author \(post.author)")
-                    post.image = UIImage(data:data!)
-                print("image of size \(post.image?.size) loaded")
-                    imageDispatchGroup.leave()
-                })
-            
-            
-            }
-        
-        print("Text retrieval complete!")
-        
-        imageDispatchGroup.notify(queue: .main){
-            print("Image retrieval complete!")
-            completion(posts,nil)
-        }
-       
-       }
-       })
-    }
-
-    func getUserFeed(userId : String, completion: @escaping ([Post]?,Error?)-> Void){
-        
-        
+        var posts = [Post]()
+        return posts
     }
     
-    func getUsersThoughtWallet(userId : String, completion: @escaping ([Post]?,Error?)-> Void) {
+    func getUsersThoughtWallet(userId:String) -> [Post]{
         
         /*
-         get all posts that current user has liked
-        */
+         get all posts whose postids match those present in likes array
+         */
         
-        reference(to: .posts).whereField(PostFields.ownerId.rawValue, arrayContains: [userId])
-            .getDocuments(completion: { (querySnapshot, err) in
-       if let err = err {
-           print("Error getting documents: \(err)")
-           completion(nil,nil)
-       } else {
-           
-           var posts = [Post]()
-           
-           for document in querySnapshot!.documents {
-               let data = document.data()
-               
-               let post = Post(parameters: data) // see if it maps properly and find some way to attach postId
-               post.postID = document.documentID
-               posts.append(post)
-           }
-           print("TW: Total posts \(posts.count)")
-           completion(posts,nil)
-       }
-       })
+        var posts = [Post]()
+        return posts
     }
+    
+    
     func deletePost(userId:Post, postID:Post){
         /*
          remove a post from current users
          */
     }
+    
     
     /*
      Firebase objectives:
@@ -457,33 +377,9 @@ class FirebaseService {
      */
     
 }
-
-
-enum UserFields : String {
-    case email
-    case name
-    case nickName
-    case evaluatedPosts
-    case likes
-    case profilePicImageURL
-    case selfPosts
+    
 }
+let userId = "oG7weadM3FHXhb9XyJBC"
 
-enum PostFields : String {
-    case author
-    case category
-    case imageURL
-    case ownerId
-    case quote
-    case likes
-}
 
-extension Date {
-    var millisecondsSince1970:String {
-        return String(Int64((self.timeIntervalSince1970 * 1000.0).rounded()))
-    }
 
-    init(milliseconds:Int64) {
-        self = Date(timeIntervalSince1970: TimeInterval(milliseconds) / 1000)
-    }
-}

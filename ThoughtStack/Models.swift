@@ -25,7 +25,7 @@ class User {
     let name : String
     let nickName : String
     let email : String
-    var profilePic : String?
+    var profilePicImageURL : String?
     var evaluatedPosts : [String]
     var selfPosts : [String]
     var likes : [String]
@@ -34,40 +34,42 @@ class User {
         name = parameters["name"] as? String ?? ""
         email = parameters["email"] as? String ?? ""
         nickName = parameters["nickName"] as? String ?? ""
+        profilePicImageURL = parameters["profilePicImageURL"] as? String ?? ""
         evaluatedPosts = [String]()
         selfPosts = [String]()
         likes = [String]()
     }
     
     func updateProfilePic(_ profilePic : String){
-        self.profilePic = profilePic
+        self.profilePicImageURL = profilePic
     }
         
 }
 
-
 class Post {
     
-    var postID : Int?
+    var postID : String?
     let quote : String
     let author : String
     var category : String
     let imageURL : String?
     let ownerID : String
-    var image : UIImage?
-    var numLikes : Int
+    var numLikes : [String]
     
-    // for convenience these two are in the model, this isnt reflected on backend
+    
+    var image : UIImage? // for convenience.
+    
+    // the foll two properties are redundant, but lbta framework needs these values to be retrieved from posts model itself and I have no other way to send these values from my list controller. Thats the reason these two are here. DO NOT REFACTOR
     var postOwnerUserName : String?
     var postOwnerProfilePic : UIImage?
     
-    init(parameters : [String: String]) {
-        quote = parameters["quote"] ?? ""
-        author = parameters["author"] ?? ""
-        category = parameters["category"] ?? ""
-        ownerID = parameters["ownerId"] ?? "-1"
-        imageURL = nil
-        numLikes = 0
+    init(parameters : [String: Any]) {
+        quote = parameters["quote"] as? String ?? ""
+        author = parameters["author"] as? String ?? ""
+        category = parameters["category"] as? String ?? ""
+        ownerID = parameters["ownerId"] as? String ?? "-1"
+        numLikes = parameters["numLikes"] as? [String] ?? [String]() // check if numlikes are getting used
+        imageURL = parameters["imageURL"] as? String ?? ""
     }
     
 

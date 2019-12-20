@@ -104,7 +104,7 @@ class PostCell : LBTAListCell<Post> {
                 quoteImage.isHidden = true
             }
             
-            numLikes.text = String(item.numLikes)
+            numLikes.text = String(item.numLikes.count)
 
         }
     }
@@ -122,9 +122,34 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
     let imagePostSize : CGFloat = 450
     
     
+    var userName : String?
+    var userProfilePic : UIImage?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.items = Utilities.singleton.getMockQuotes()
+//        self.items = Utilities.singleton.getMockQuotes() //testing front end
+        
+//        Utilities.singleton.testFIR() // use to add sample quotes fast
+    
+    
+        FirebaseService.shared.getUsersPosts(userId: userId, completion: {
+            posts,error in
+            
+            if error != nil || posts == nil {
+                print("Client side: couldnt get posts!",error?.localizedDescription ?? "")
+                return
+            }
+            
+            print("reached front end!")
+            for post in posts! {
+                post.postOwnerUserName = "prabhu150"
+                post.postOwnerProfilePic = UIImage(named:"goku")!
+            }
+            
+            self.items = posts!
+            
+        })
+        
     }
     
     func tearDownSpinner(){
