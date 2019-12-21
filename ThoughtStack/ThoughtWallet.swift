@@ -12,12 +12,11 @@
  Issues:
  
  TW got zero posts
- 
  Cards have hardcoded username and profile pics
  
- Dashboard got zero posts
- 
- Undo did not work for the backend part.
+ thoughtwallet
+ fix username and profile pic issue at thoughtwallet
+ add spinner to thoughtwallet
  
  
  */
@@ -34,14 +33,6 @@ class ThoughtWallet: LBTAListController<PostCell,Post>,UICollectionViewDelegateF
     let normalPostSize : CGFloat = 250
     let imagePostSize : CGFloat = 450
     
-    /*
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.setUpSpinner()
-//        self.items = Utilities.singleton.getMockQuotes() // change this to get user liked posts
-        
-    }
-    */
     
     func tearDownSpinner(){
         spinner.willMove(toParent: nil)
@@ -68,34 +59,30 @@ class ThoughtWallet: LBTAListController<PostCell,Post>,UICollectionViewDelegateF
     func checkPostCount(){
         // this function keeps track of number of posts by current user every time the view appears, if it changes it reflects dashboard
         
-        print("checking for new posts?")
+        print("TW: Check for new content?")
         
-        FirebaseService.shared.getUsersThoughtWallet(userId: userId, completion: { posts,error in
+        FirebaseService.shared.getThoughtWalletPostCount(userId: userId, completion: { postCount,error in
             
-            if error != nil || posts == nil {
-                print("Couldnt get tw")
-                return
-            }
+             let newPostCount = postCount ?? 0
+             print("Old TW pc: \(self.lastpostCount) New TW pc: \(newPostCount)")
             
-            
-            if let thoughtWalletPosts = posts {
-               
-                let postCount = thoughtWalletPosts.count
-               
-                if postCount > self.lastpostCount {
-                    // write logic that appends to items rather than overwrite its completely
-                    let sortedPosts = thoughtWalletPosts.sorted{ post1, post2 in
-                        return post1.timeStamp > post2.timeStamp
+             if newPostCount != self.lastpostCount {
+                
+                self.setUpSpinner()
+                
+                FirebaseService.shared.getUsersThoughtWallet(userId: self.userId, completion: { posts,error in
+                    
+                    if error != nil || posts == nil {
+                        print("Couldnt get dashboard")
+                        return
                     }
-    
-                    self.items = sortedPosts
-                    self.lastpostCount = postCount
-                }
-               
-               self.tearDownSpinner()
-            }
-            
-           
+                    print("Got \(posts!.count) quotes")
+                    self.items = posts!
+//                    self.collectionView.reloadData()
+                    self.lastpostCount = newPostCount
+                    self.tearDownSpinner()
+                    })
+             }
             
         })
         

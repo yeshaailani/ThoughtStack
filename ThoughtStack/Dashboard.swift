@@ -127,24 +127,7 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        self.items = Utilities.singleton.getMockQuotes() //testing front end
-        
-//        Utilities.singleton.testFIR() // use to add sample quotes fast
-    
-        self.setUpSpinner()
-        FirebaseService.shared.getUsersDashboard(userId: userId, completion: {
-            posts,error in
-            
-            if error != nil || posts == nil {
-                print("Client side: couldnt get posts!",error?.localizedDescription ?? "")
-                return
-            }
-            
-            self.items = posts!
-            self.tearDownSpinner()
-            
-        })
-        
+        self.checkPostCount()
     }
     
     func tearDownSpinner(){
@@ -173,31 +156,36 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
     
         
     func checkPostCount(){
-        print("checking for new posts?")
+        
         // this function keeps track of number of posts by current user every time the view appears, if it changes it reflects dashboard
         
-        FirebaseService.shared.getUsersDashboard(userId: userId, completion: { posts,error in
+        FirebaseService.shared.getDashboardPostCount(userId: userId, completion: { postCount,error in
             
-            if error != nil || posts == nil {
-                print("Couldnt get tw")
-                return
-            }
+
+             let newPostCount = postCount ?? 0
+             print("Old posts count \(self.lastpostCount) New posts count: \(newPostCount)")
             
-            
-            if let dashboardPosts = posts {
-               let postCount = dashboardPosts.count
-               
-                if postCount > self.lastpostCount {
-                    self.items = posts! // sort by timestamp if possible
-                    self.lastpostCount = postCount
-                }
-               
-               self.tearDownSpinner()
-            }
-            
-           
+             if newPostCount != self.lastpostCount {
+                
+                self.setUpSpinner()
+                
+                FirebaseService.shared.getUsersDashboard(userId: self.userId, completion: { posts,error in
+                    
+                    if error != nil || posts == nil {
+                        print("Couldnt get dashboard")
+                        return
+                    }
+                    print("Got \(posts!.count) quotes")
+                    self.items = posts!
+//                    self.collectionView.reloadData()
+                    self.lastpostCount = newPostCount
+                    self.tearDownSpinner()
+                    
+                    })
+             }
             
         })
+         
     }
         
         
@@ -234,7 +222,7 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         parent?.navigationItem.title = "Dashboard"
-        
+        self.checkPostCount()
         self.setupNavigation()
     }
     

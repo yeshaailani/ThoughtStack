@@ -34,7 +34,11 @@ class TabBar: UITabBarController {
         createPost.tabBarItem = UITabBarItem(title: "Create Post", image: UIImage(named: "plus-outline"), selectedImage: UIImage(named: "plus-filled"))
         
         
-        viewControllers = [dashboard,feed,createPost]
+        let wallet = ThoughtWallet(userId: mockUserID)
+        wallet.tabBarItem = UITabBarItem(title: "ThoughtWallet", image: UIImage(named: "wallet-outline"), selectedImage: UIImage(named: "wallet-filled"))
+        
+        
+        viewControllers = [dashboard,feed,wallet]
     }
     
     
