@@ -9,6 +9,9 @@
 import UIKit
 import TinyConstraints
 
+
+// TODO: fix the profile pic and username within the card itself
+
 class Card: UIView {
     
     // MARK: Properties
@@ -109,12 +112,7 @@ class Card: UIView {
     
     func setupViews(){
         
-//        parent?.navigationItem.title = "prabhu150"
-//        parent?.navigationItem.rightBarButtonItem = logoutButton
-//
-        
         var totalViews = [containerView,cardContainer,likeButton,skipButton,profileContainer,quoteText,author]
-        
         
         if let image = quoteImage {
             self.quoteOptionalImageView = UIImageView(image:image,contentMode: .scaleAspectFit)

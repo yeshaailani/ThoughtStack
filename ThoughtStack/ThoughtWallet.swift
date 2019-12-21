@@ -6,6 +6,23 @@
 //  Copyright © 2019 Yesha Ailani. All rights reserved.
 //
 
+
+/*
+ 
+ Issues:
+ 
+ TW got zero posts
+ 
+ Cards have hardcoded username and profile pics
+ 
+ Dashboard got zero posts
+ 
+ Undo did not work for the backend part.
+ 
+ 
+ */
+
+
 import UIKit
 import LBTATools
 
@@ -17,11 +34,14 @@ class ThoughtWallet: LBTAListController<PostCell,Post>,UICollectionViewDelegateF
     let normalPostSize : CGFloat = 250
     let imagePostSize : CGFloat = 450
     
-    
+    /*
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.items = Utilities.singleton.getMockQuotes() // change this to get user liked posts
+        self.setUpSpinner()
+//        self.items = Utilities.singleton.getMockQuotes() // change this to get user liked posts
+        
     }
+    */
     
     func tearDownSpinner(){
         spinner.willMove(toParent: nil)
@@ -34,9 +54,7 @@ class ThoughtWallet: LBTAListController<PostCell,Post>,UICollectionViewDelegateF
         view.addSubview(spinner.view)
         spinner.didMove(toParent: self)
     }
-    //    let textPostSize : CGFloat = 300
-        
-        
+    
     init(userId : String){
         self.userId = userId
         self.lastpostCount = 0
@@ -47,10 +65,40 @@ class ThoughtWallet: LBTAListController<PostCell,Post>,UICollectionViewDelegateF
         fatalError("init(coder:) has not been implemented")
     }
     
-        
     func checkPostCount(){
-        print("checking for new posts?")
         // this function keeps track of number of posts by current user every time the view appears, if it changes it reflects dashboard
+        
+        print("checking for new posts?")
+        
+        FirebaseService.shared.getUsersThoughtWallet(userId: userId, completion: { posts,error in
+            
+            if error != nil || posts == nil {
+                print("Couldnt get tw")
+                return
+            }
+            
+            
+            if let thoughtWalletPosts = posts {
+               
+                let postCount = thoughtWalletPosts.count
+               
+                if postCount > self.lastpostCount {
+                    // write logic that appends to items rather than overwrite its completely
+                    let sortedPosts = thoughtWalletPosts.sorted{ post1, post2 in
+                        return post1.timeStamp > post2.timeStamp
+                    }
+    
+                    self.items = sortedPosts
+                    self.lastpostCount = postCount
+                }
+               
+               self.tearDownSpinner()
+            }
+            
+           
+            
+        })
+        
     }
         
         
@@ -75,11 +123,11 @@ class ThoughtWallet: LBTAListController<PostCell,Post>,UICollectionViewDelegateF
     }
 
 
-        
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        print("Got called")
         navigationItem.title = "ThoughtWallet"
-        checkPostCount()
+        self.checkPostCount()
     }
         
 

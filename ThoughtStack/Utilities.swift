@@ -65,7 +65,6 @@ class Utilities {
         return tempQuotes
     }()
     
-    
     var quoteImages = [
                "cry-smile-over",
                "guilty-of-not-do",
@@ -76,12 +75,11 @@ class Utilities {
                  "well-done-well-said",
            ]
     
-    
     func testFIR(){
        
         print("Going to test \(quotes.count) quotes")
         for (index,quote) in quotes.enumerated() {
-            FirebaseService.shared.addPost(userId : "",post: quote,optionalImage: UIImage(named: quoteImages[index]))
+            FirebaseService.shared.addPost(userId : "oG7weadM3FHXhb9XyJBC",post: quote,optionalImage: UIImage(named: quoteImages[index]))
         }
         
     }
@@ -94,7 +92,6 @@ class Utilities {
         let dateString = formatter.string(from: date)
         return dateString
     }
-    
     
     func getMockQuotes() -> [Post] {
         
@@ -118,5 +115,47 @@ class Utilities {
     }
     
     
+    // MARK: Persistent data
+    
+    func save(email:String, userId: String) {
+        UserDefaults.standard.set(email, forKey : UserFields.email.rawValue)
+        UserDefaults.standard.set(userId, forKey : UserFields.userId.rawValue)
+    }
+    
+    func load() -> [String:String]? {
+        
+        if let email = UserDefaults.standard.string(forKey:UserFields.email.rawValue), let userId =  UserDefaults.standard.string(forKey:UserFields.userId.rawValue){
+            let result = [UserFields.email.rawValue: email,UserFields.userId.rawValue : userId]
+            return result
+        }
+        
+        return nil
+    }
+    
+    func clearCache(){
+        
+        let keys = [UserFields.userId.rawValue,UserFields.email.rawValue]
+        
+        for key in keys
+        {
+            UserDefaults.standard.removeObject(forKey:key)
+        }
+    }
+    
 }
 
+class SpinnerViewController: UIViewController {
+    var spinner = UIActivityIndicatorView(style: .whiteLarge)
+
+    override func loadView() {
+        view = UIView()
+        view.backgroundColor = UIColor(white: 0, alpha: 0.7)
+
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.startAnimating()
+        view.addSubview(spinner)
+
+        spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+    }
+}

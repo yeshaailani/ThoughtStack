@@ -12,12 +12,31 @@ import FirebaseFirestore
 import FirebaseCore
 import UIKit
 
+
+
+/*
+ 
+ TODO:
+ 
+ 
+ load username and profile pic of every user when u are showing his post.
+ test feed heavily....
+ fix the issues with card swipes and overlays
+ integrate yeshas work
+ refactor
+ 
+ 
+ 
+ */
+
 class FirebaseService {
     
     private init(){}
     static let shared =  FirebaseService()
+    static let placeHolderUserProfilePic = "https://firebasestorage.googleapis.com/v0/b/thoughtstackswift-a8167.appspot.com/o/profile-pics%2Fplaceholder.jpg?alt=media&token=40e85e25-48a7-4849-b680-4a972a8940c7"
     
-
+    static let maxImageUploadSize : Int64 = 2 * 1024 * 1024 // 2 MB
+    
     func configure(){
         FirebaseApp.configure()
     }
@@ -33,41 +52,67 @@ class FirebaseService {
         return val
     }
     
-    func addUser(params : [String : Any]) {
-        
+    func addUser(params : [String : Any],optionalProfilePic: UIImage? = nil) {
+    
+        /*
         let params : [String : Any] = [
-            "name" : "abhi",
-            "email" : "abc@gm.com",
-            "nickName" : "abc15",
-            "profilePic" : -1,
+            UserFields.name.rawValue : "abhi",
+            UserFields.email.rawValue : "abc@gm.com",
+            UserFields.nickName.rawValue : "abc15",
+            UserFields.profilePicImageURL.rawValue : -1,
+            UserFields.evaluatedPosts.rawValue : [String](),
+            UserFields.likes.rawValue : [String](),
+            UserFields.selfPosts.rawValue : [String]()
         ];
+        */
+        var user = params
         
-        reference(to: .users).addDocument(data: params)
         
+        if let image = optionalProfilePic {
+            self.uploadProfilePicImage(image: image, completion: { error, downloadURL in
+            
+                print("Attached profile pic to user!")
+                user[UserFields.profilePicImageURL.rawValue] = downloadURL
+                self.reference(to: .users).addDocument(data: user)
+            })
+        }
+        else
+        {
+            user[UserFields.profilePicImageURL.rawValue] = FirebaseService.placeHolderUserProfilePic
+            
+            print("Adding user without a profile pic")
+            reference(to: .users).addDocument(data: user)
+        }
+        
+
     }
     
     func addPost(userId: String,post: [String : Any],optionalImage : UIImage? = nil){
         
         var data = post
         
+        data[PostFields.timeStamp.rawValue] = Date().millisecondsSince1970 // added for sort by recent
+        
         if let image = optionalImage {
             self.uploadPostImage(image: image, completion: {error,downloadURL in
                 
                 if let _ = error {
-                    print("upload post error" + (error?.localizedDescription ?? ""))
+                    print("Upload post error" + (error?.localizedDescription ?? ""))
                     return
                 }
                 
-                print("sending quote with image")
+                print("Attaching image to quote")
                 
                 if downloadURL != nil
                 {
-                    data["imageURL"] = downloadURL
-                    
+                    data[PostFields.imageURL.rawValue] = downloadURL
+            
                     let newPostId = self.reference(to: .posts).document().documentID
+                    
                     self.reference(to: .posts).document(newPostId).setData(data)
+                    
                     self.reference(to: .users).document(userId).updateData([
-                        UserFields.selfPosts : FieldValue.arrayUnion([newPostId])
+                        UserFields.selfPosts.rawValue : FieldValue.arrayUnion([newPostId])
                     ])
                 
                     print("Added post with an image! \(String(describing: downloadURL))")
@@ -81,7 +126,7 @@ class FirebaseService {
             let newPostId = self.reference(to: .posts).document().documentID
             self.reference(to: .posts).document(newPostId).setData(data)
             self.reference(to: .users).document(userId).updateData([
-                UserFields.selfPosts : FieldValue.arrayUnion([newPostId])
+                UserFields.selfPosts.rawValue : FieldValue.arrayUnion([newPostId])
             ])
         }
         
@@ -186,7 +231,6 @@ class FirebaseService {
          }
     }
     
-    
     fileprivate func getAllPosts(userId : String, completion : @escaping ([Post]?,Error?) -> Void ) {
 
         /*
@@ -215,6 +259,63 @@ class FirebaseService {
         
     }
     
+    fileprivate func getPostByIds(postIds: [String], completion : @escaping([Post]?,Error?) -> Void){
+        
+        var posts = [Post]()
+        let postDispatchGroup = DispatchGroup()
+        
+        for postId in postIds {
+            
+            reference(to: .posts).document(postId).getDocument(completion: {post,error in
+               
+                if error == nil && post != nil {
+                    
+                    let currentPost = Post(parameters: post?.data() ?? [String:Any]()) // fix later
+                    
+                    print("found qa:\(currentPost.author)")
+                    
+                    if currentPost.imageURL != nil {
+                        
+                    postDispatchGroup.enter()
+                        
+                    Storage.storage().reference(forURL:currentPost.imageURL!).getData(maxSize: FirebaseService.maxImageUploadSize, completion: {
+                                data,error in
+                                
+                                if error != nil || data == nil {
+                                    print("error attaching image to post",error?.localizedDescription ?? "")
+                                    return
+                                }
+                                
+                                print("Attached image for post with author \(currentPost.author)")
+                                currentPost.image = UIImage(data:data!)
+                                posts.append(currentPost)
+                                postDispatchGroup.leave()
+                            })
+                    }
+                    else {
+                        posts.append(currentPost)
+                        print("got quote without image")
+                    }
+                    
+                    postDispatchGroup.notify(queue: .main) {
+                        print("Post retrieval with images complete! count:\(posts.count)")
+                        completion(posts,nil)
+                    }
+                     
+        
+                }
+                // TODO: handle errors later
+            })
+            
+        }
+        
+        print("Non image quotes done")
+        
+        
+        
+        
+    }
+    
     
     func getCurrentUser(userId:String,completion: @escaping (User?,Error?) -> Void ){
         
@@ -236,7 +337,6 @@ class FirebaseService {
                     return
                 }
                 
-
                 let currentUser = User(parameters: data!)
                 print("User \(currentUser.name) found!")
                 completion(currentUser,nil)
@@ -301,11 +401,9 @@ class FirebaseService {
     
     func userHitUndo(userId:String,postId: String){
         /*
-         
+         MARK: modify undo
          undo shouldnt work for the very first post!!!
-         
          remove postid from user's evaluated posts
-         
          check if user liked that post before?
          
          if no, return
@@ -335,7 +433,6 @@ class FirebaseService {
                 return
             }
             
-            
             let user = User(parameters: snapshot!.data() ?? [String:Any]()) // ensure backend doesnt have any invalid values
             
             if user.likes.contains(postId) {
@@ -344,76 +441,74 @@ class FirebaseService {
                 ])
                 
                 self.reference(to: .posts).document(postId).updateData([PostFields.likes.rawValue:FieldValue.arrayRemove([userId])])
-                
             }
-            
-            
         })
         
+    } // Issues with this
         
-    }
-    
-    func getUsersPosts(userId : String, completion: @escaping ([Post]?,Error?)-> Void) {
-        
-        reference(to: .posts).whereField(PostFields.ownerId.rawValue, isEqualTo: userId)
-            .getDocuments(completion: { (querySnapshot, err) in
-       if let err = err {
-           print("Error getting documents: \(err)")
-           completion(nil,nil)
-       } else {
-           
-           var posts = [Post]()
-           
-           for document in querySnapshot!.documents {
-               let data = document.data()
+    func getUsersDashboard(userId : String, completion: @escaping ([Post]?,Error?)-> Void) {
+        self.getCurrentUser(userId: userId, completion: {user,error in
+            
+            let userName = user!.nickName // refactor this later
+            let userProfilePic = user!.profilePicImageURL
+            
+            self.reference(to: .posts).whereField(PostFields.ownerId.rawValue, isEqualTo: userId)
+                    .getDocuments(completion: { (querySnapshot, err) in
+               if let err = err {
+                   print("Error getting documents: \(err)")
+                   completion(nil,nil)
+               } else {
+                   
+                   var posts = [Post]()
+                   
+                   for document in querySnapshot!.documents {
+                       let data = document.data()
+                       
+                       let post = Post(parameters: data) // see if it maps properly and find some way to attach postId
+                       post.postID = document.documentID
+                       post.postOwnerUserName = userName
+                        
+                    posts.append(post)
+                   }
                
-               let post = Post(parameters: data) // see if it maps properly and find some way to attach postId
-               post.postID = document.documentID
-               posts.append(post)
-           }
-           print("DashB: Total posts \(posts.count)")
-           print("Attaching images...")
-        
-       
-        let imageDispatchGroup = DispatchGroup()
-        let storage = Storage.storage()
-        
-        
-        for post in posts {
-                              
-                if post.imageURL == nil {
-                    continue // no image for current post
-                }
+                let imageDispatchGroup = DispatchGroup()
+                let storage = Storage.storage()
                 
-            imageDispatchGroup.enter()
-       
-            storage.reference(forURL:post.imageURL!).getData(maxSize: 2*1024*1024, completion: {
-                    data,error in
+                
+                for post in posts {
+                                      
+                        if post.imageURL == nil {
+                            continue // no image for current post
+                        }
+                        
+                    imageDispatchGroup.enter()
+               
+                    storage.reference(forURL:post.imageURL!).getData(maxSize: FirebaseService.maxImageUploadSize, completion: {
+                            data,error in
+                            
+                            if error != nil || data == nil {
+                                print("error attaching image to post",error?.localizedDescription ?? "")
+                                return
+                            }
+                            
+                            print("Attached image for post with author \(post.author)")
+                            post.image = UIImage(data:data!)
+                            imageDispatchGroup.leave()
+                        })
                     
-                    if error != nil || data == nil {
-                        print("error attaching image to post",error?.localizedDescription ?? "")
-                        return
+            
                     }
-                    
-                    print("Attached image for post with author \(post.author)")
-                    post.image = UIImage(data:data!)
-                print("image of size \(post.image?.size) loaded")
-                    imageDispatchGroup.leave()
-                })
-            
-            
-    
-            }
-        
-        print("Text retrieval complete!")
-        
-        imageDispatchGroup.notify(queue: .main){
-            print("Image retrieval complete!")
-            completion(posts,nil)
-        }
-       
-       }
-       })
+                
+                print("Text retrieval complete!")
+                
+                imageDispatchGroup.notify(queue: .main){
+                    print("Image retrieval complete!")
+                    completion(posts,nil)
+                }
+               
+               }
+               })
+        })
     }
 
     func getUserFeed(userId : String, completion: @escaping ([Post]?,Error?)-> Void){
@@ -499,7 +594,8 @@ class FirebaseService {
          get all posts that current user has liked
         */
         
-        reference(to: .posts).whereField(PostFields.ownerId.rawValue, arrayContains: [userId])
+        /*
+        reference(to: .posts).whereField(PostFields.likes.rawValue, arrayContains: [userId])
             .getDocuments(completion: { (querySnapshot, err) in
        if let err = err {
            print("Error getting documents: \(err)")
@@ -515,11 +611,42 @@ class FirebaseService {
                post.postID = document.documentID
                posts.append(post)
            }
-           print("TW: Total posts \(posts.count)")
+           print("TW: Total posts: \(posts.count)")
            completion(posts,nil)
        }
        })
+         */
+        
+        
+        self.getCurrentUser(userId: userId, completion: {user,error in
+            
+            if error == nil && user != nil {
+                
+                let currentUser = user!
+                
+                if currentUser.likes.count > 0
+                {
+                    self.getPostByIds(postIds: currentUser.likes, completion: { posts, error in
+                        completion(posts,nil)
+                    })
+                }else
+                {
+                    completion([Post](),nil)
+                }
+                
+            }else
+            {
+                print("couldnt get thoughtwallet")
+                completion(nil,error)
+            }
+            
+            
+        })
+        
+        
+        
     }
+    
     func deletePost(userId:Post, postID:Post){
         /*
          remove a post from current users

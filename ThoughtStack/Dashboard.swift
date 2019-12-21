@@ -131,8 +131,8 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
         
 //        Utilities.singleton.testFIR() // use to add sample quotes fast
     
-    
-        FirebaseService.shared.getUsersPosts(userId: userId, completion: {
+        self.setUpSpinner()
+        FirebaseService.shared.getUsersDashboard(userId: userId, completion: {
             posts,error in
             
             if error != nil || posts == nil {
@@ -140,13 +140,8 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
                 return
             }
             
-            print("reached front end!")
-            for post in posts! {
-                post.postOwnerUserName = "prabhu150"
-                post.postOwnerProfilePic = UIImage(named:"goku")!
-            }
-            
             self.items = posts!
+            self.tearDownSpinner()
             
         })
         
@@ -180,6 +175,29 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
     func checkPostCount(){
         print("checking for new posts?")
         // this function keeps track of number of posts by current user every time the view appears, if it changes it reflects dashboard
+        
+        FirebaseService.shared.getUsersDashboard(userId: userId, completion: { posts,error in
+            
+            if error != nil || posts == nil {
+                print("Couldnt get tw")
+                return
+            }
+            
+            
+            if let dashboardPosts = posts {
+               let postCount = dashboardPosts.count
+               
+                if postCount > self.lastpostCount {
+                    self.items = posts! // sort by timestamp if possible
+                    self.lastpostCount = postCount
+                }
+               
+               self.tearDownSpinner()
+            }
+            
+           
+            
+        })
     }
         
         
@@ -203,34 +221,36 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
         
     }
 
-
+    func setupNavigation() {
+           
+        self.parent?.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named:"wallet-outline")!, style: .plain, target: self, action: #selector(walletTapped))
+           
+           self.parent?.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named:"logout")!, style: .plain, target: self, action: #selector(logoutTapped))
+           
+           self.parent?.navigationItem.title = "Dashboard"
+           
+       }
         
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         parent?.navigationItem.title = "Dashboard"
         
-        checkPostCount()
+        self.setupNavigation()
     }
-        
+    
+    @objc func logoutTapped() {
+        print("Logout has been tapped!")
+        // auth logic here
+    }
+            
+    @objc func walletTapped(){
+        self.parent?.navigationController?.pushViewController(ThoughtWallet(userId: self.userId), animated: true)
+    }
 
 }
 
 
-class SpinnerViewController: UIViewController {
-    var spinner = UIActivityIndicatorView(style: .whiteLarge)
 
-    override func loadView() {
-        view = UIView()
-        view.backgroundColor = UIColor(white: 0, alpha: 0.7)
-
-        spinner.translatesAutoresizingMaskIntoConstraints = false
-        spinner.startAnimating()
-        view.addSubview(spinner)
-
-        spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-    }
-}
 extension String {
     func height(withConstrainedWidth width: CGFloat, font: UIFont) -> CGFloat {
         let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)

@@ -20,9 +20,9 @@ class TabBar: UITabBarController {
         
         self.tabBar.barStyle = .black
         
+//        Utilities.singleton.testFIR() // add quotes as abhi
         
-        let mockUserID = "uK4evBYAkmdU5KTGIn6c"
-        
+        let mockUserID = "uK4evBYAkmdU5KTGIn6c" // yesha id
         
         let feed = Feed(userId: mockUserID) // in future take userId from persistent data or FIRAuth
         feed.tabBarItem = UITabBarItem(title: "Feed", image: UIImage(named: "grid-outline")!, selectedImage: UIImage(named: "grid-filled")!)

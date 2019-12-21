@@ -31,18 +31,15 @@ class User {
     var likes : [String]
 
     init(parameters : [String: Any]) {
-        name = parameters["name"] as? String ?? ""
-        email = parameters["email"] as? String ?? ""
-        nickName = parameters["nickName"] as? String ?? ""
-        profilePicImageURL = parameters["profilePicImageURL"] as? String ?? ""
-        evaluatedPosts = parameters[UserFields.evaluatedPosts.rawValue] as! [String]
-        selfPosts = parameters[UserFields.selfPosts.rawValue] as! [String]
-        likes = parameters[UserFields.likes.rawValue] as! [String]
+        name = parameters[UserFields.name.rawValue] as? String ?? "Some User"
+        email = parameters[UserFields.email.rawValue] as? String ?? "someEmail@gmail.com"
+        nickName = parameters[UserFields.nickName.rawValue] as? String ?? "someNickname"
+        profilePicImageURL = parameters[UserFields.profilePicImageURL.rawValue] as? String
+        evaluatedPosts = parameters[UserFields.evaluatedPosts.rawValue] as? [String] ?? [String]()
+        selfPosts = parameters[UserFields.selfPosts.rawValue] as? [String] ?? [String]()
+        likes = parameters[UserFields.likes.rawValue] as? [String] ?? [String]()
     }
-    
-    func updateProfilePic(_ profilePic : String){
-        self.profilePicImageURL = profilePic
-    }
+
         
 }
 
@@ -55,21 +52,22 @@ class Post {
     let imageURL : String?
     let ownerID : String
     var numLikes : [String]
-    
-    
     var image : UIImage? // for convenience.
+    var timeStamp : String
+    
     
     // the foll two properties are redundant, but lbta framework needs these values to be retrieved from posts model itself and I have no other way to send these values from my list controller. Thats the reason these two are here. DO NOT REFACTOR
     var postOwnerUserName : String?
     var postOwnerProfilePic : UIImage?
     
     init(parameters : [String: Any]) {
-        quote = parameters["quote"] as? String ?? ""
-        author = parameters["author"] as? String ?? ""
-        category = parameters["category"] as? String ?? ""
-        ownerID = parameters["ownerId"] as? String ?? "-1"
-        numLikes = parameters["numLikes"] as? [String] ?? [String]() // check if numlikes are getting used
-        imageURL = parameters["imageURL"] as? String
+        quote = parameters[PostFields.quote.rawValue] as? String ?? ""
+        author = parameters[PostFields.author.rawValue] as? String ?? ""
+        category = parameters[PostFields.category.rawValue] as? String ?? ""
+        ownerID = parameters[PostFields.ownerId.rawValue] as? String ?? "-1"
+        numLikes = parameters[PostFields.likes.rawValue] as? [String] ?? [String]() // check if numlikes are getting used
+        imageURL = parameters[PostFields.imageURL.rawValue] as? String
+        timeStamp = parameters[PostFields.timeStamp.rawValue] as? String ?? "-1"
     }
     
 
@@ -85,6 +83,7 @@ enum TableReferences : String {
     case posts = "Posts"
 }
 enum UserFields : String {
+    case userId
     case email
     case name
     case nickName
@@ -95,10 +94,12 @@ enum UserFields : String {
 }
 
 enum PostFields : String {
+    case postId
     case author
     case category
     case imageURL
     case ownerId
     case quote
     case likes
+    case timeStamp
 }

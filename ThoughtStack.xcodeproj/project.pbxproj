@@ -49,7 +49,6 @@
 		2F835F4BA364CDC71FE24FB9 /* Pods-ThoughtStackTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThoughtStackTests.debug.xcconfig"; path = "Target Support Files/Pods-ThoughtStackTests/Pods-ThoughtStackTests.debug.xcconfig"; sourceTree = "<group>"; };
 		52FFDA9AAA758328D40ADDAC /* Pods-ThoughtStack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThoughtStack.debug.xcconfig"; path = "Target Support Files/Pods-ThoughtStack/Pods-ThoughtStack.debug.xcconfig"; sourceTree = "<group>"; };
 		8C93A429CFAB74EF1C33A28B /* Pods-ThoughtStack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThoughtStack.release.xcconfig"; path = "Target Support Files/Pods-ThoughtStack/Pods-ThoughtStack.release.xcconfig"; sourceTree = "<group>"; };
-		9A06737123AC76AB008E99F1 /* firebase-mocks.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = "firebase-mocks.playground"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9A90A9B7239B1E790004EF08 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		9A90A9B9239B1FE80004EF08 /* CreatePost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePost.swift; sourceTree = "<group>"; };
 		9AAB504F239AC38400BA5453 /* Dashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard.swift; sourceTree = "<group>"; };
@@ -106,19 +105,18 @@
 		164C7A37239A56E10051088E /* ThoughtStack */ = {
 			isa = PBXGroup;
 			children = (
-				9A06737123AC76AB008E99F1 /* firebase-mocks.playground */,
 				164C7A58239A57B70051088E /* GoogleService-Info.plist */,
 				164C7A38239A56E10051088E /* AppDelegate.swift */,
 				164C7A3F239A56E20051088E /* Assets.xcassets */,
 				164C7A41239A56E20051088E /* LaunchScreen.storyboard */,
 				164C7A44239A56E20051088E /* Info.plist */,
-				9AD3447723AAD01200A2599E /* Card.swift */,
-				9AAB504F239AC38400BA5453 /* Dashboard.swift */,
-				9AAB5051239AC3D200BA5453 /* ThoughtWallet.swift */,
-				9AAB5053239AC40000BA5453 /* Feed.swift */,
-				9AAB5055239AC43D00BA5453 /* Models.swift */,
 				9A90A9B7239B1E790004EF08 /* TabBar.swift */,
+				9AAB504F239AC38400BA5453 /* Dashboard.swift */,
+				9AAB5053239AC40000BA5453 /* Feed.swift */,
+				9AAB5051239AC3D200BA5453 /* ThoughtWallet.swift */,
+				9AD3447723AAD01200A2599E /* Card.swift */,
 				9A90A9B9239B1FE80004EF08 /* CreatePost.swift */,
+				9AAB5055239AC43D00BA5453 /* Models.swift */,
 				9AFB0EF4239C39BA00172494 /* FirebaseService.swift */,
 				9AFB0EF6239C56E700172494 /* Utilities.swift */,
 			);
@@ -423,6 +421,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -477,6 +476,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

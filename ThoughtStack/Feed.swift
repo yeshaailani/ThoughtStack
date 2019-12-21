@@ -10,14 +10,14 @@ import TinyConstraints
  Issues:
  
  1. Need to resize card and the views within based on whether images are included or not
- 2. Need to connect front end to backend
- 3. TW button on the top will take user to list of posts
+ 
  */
 
 class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
     
     var userId : String
+    var spinner = SpinnerViewController()
     
     lazy var kolodaView : KolodaView = {
         let view = KolodaView()
@@ -49,22 +49,23 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     fileprivate var dataSource = [Post]()
         
     init(userId : String){
+        // refactor this if possible
         self.userId = userId
-        
         super.init(nibName: nil, bundle: nil)
-        
-        FirebaseService.shared.getUserFeed(userId: self.userId, completion: {posts,error in
-            
-            if error != nil || posts == nil {
-                print("Error couldnt retrieve posts!",error?.localizedDescription)
-                return
-            }
-                        
-            self.dataSource = posts!
-            self.kolodaView.reloadData()
-        })
-        
-        
+    }
+    
+    
+    func tearDownSpinner(){
+        spinner.willMove(toParent: nil)
+        spinner.view.removeFromSuperview()
+        spinner.removeFromParent()
+    }
+    
+    func setUpSpinner(){
+        addChild(spinner)
+        spinner.view.frame = view.frame
+        view.addSubview(spinner.view)
+        spinner.didMove(toParent: self)
     }
     
     required init?(coder: NSCoder) {
@@ -74,9 +75,30 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        Utilities.singleton.testFIR()
+
+        self.setUpSpinner()
         kolodaView.delegate = self
         kolodaView.dataSource = self
+        
+        FirebaseService.shared.getUserFeed(userId: self.userId, completion: {posts,error in
+            
+            if error != nil || posts == nil {
+                print("Error couldnt retrieve posts!",error?.localizedDescription)
+                return
+            }
+                        
+            if let feedPosts = posts {
+                
+                let sortedPosts = feedPosts.sorted{ post1,post2 in
+                    return post1.timeStamp > post2.timeStamp
+                }
+                self.dataSource = sortedPosts
+                self.kolodaView.reloadData()
+                self.tearDownSpinner()
+            }
+            
+            
+        })
         
         setupNavigation()
         addViews()
@@ -128,6 +150,9 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         print("Checking for new posts?")
+        // method here will ensure feed is upto date
+        
+        setupNavigation()
     }
     
     @objc func walletTapped(){
@@ -147,6 +172,9 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
     @objc func undoTapped() {
         print("undo simul")
+        
+        let lastCard = kolodaView.currentCardIndex - 1 > -1 ? kolodaView.currentCardIndex - 1 : 0;
+        FirebaseService.shared.userHitUndo(userId: userId, postId: dataSource[lastCard].postID)
         kolodaView.revertAction()
     }
     
