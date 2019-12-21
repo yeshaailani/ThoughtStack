@@ -20,10 +20,14 @@ class TabBar: UITabBarController {
         
         self.tabBar.barStyle = .black
         
-        let feed = Feed(userId: "oG7weadM3FHXhb9XyJBC")
+        
+        let mockUserID = "uK4evBYAkmdU5KTGIn6c"
+        
+        
+        let feed = Feed(userId: mockUserID) // in future take userId from persistent data or FIRAuth
         feed.tabBarItem = UITabBarItem(title: "Feed", image: UIImage(named: "grid-outline")!, selectedImage: UIImage(named: "grid-filled")!)
         
-        let dashboard = Dashboard(userId: "oG7weadM3FHXhb9XyJBC") // TODO: take from persistent data later
+        let dashboard = Dashboard(userId: mockUserID) // TODO: take from persistent data later
         dashboard.tabBarItem = UITabBarItem(title: "Dashboard", image: UIImage(named: "user-outline")!, selectedImage: UIImage(named: "user-filled")!)
         
         let createPost = CreatePost()

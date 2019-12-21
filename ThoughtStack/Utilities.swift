@@ -81,7 +81,7 @@ class Utilities {
        
         print("Going to test \(quotes.count) quotes")
         for (index,quote) in quotes.enumerated() {
-            FirebaseService.shared.addPost(post: quote,optionalImage: UIImage(named: quoteImages[index]))
+            FirebaseService.shared.addPost(userId : "",post: quote,optionalImage: UIImage(named: quoteImages[index]))
         }
         
     }

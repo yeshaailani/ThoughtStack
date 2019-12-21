@@ -46,14 +46,25 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
     lazy var panel = UIStackView()
     
-    fileprivate var dataSource : [Post] = {
-        let posts = Utilities.singleton.getMockQuotes()
-        return posts
-    }()
+    fileprivate var dataSource = [Post]()
         
     init(userId : String){
         self.userId = userId
+        
         super.init(nibName: nil, bundle: nil)
+        
+        FirebaseService.shared.getUserFeed(userId: self.userId, completion: {posts,error in
+            
+            if error != nil || posts == nil {
+                print("Error couldnt retrieve posts!",error?.localizedDescription)
+                return
+            }
+                        
+            self.dataSource = posts!
+            self.kolodaView.reloadData()
+        })
+        
+        
     }
     
     required init?(coder: NSCoder) {
@@ -100,7 +111,7 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
         panel.padLeft(8)
         panel.padRight(8)
         
-        
+
         containerView.edgesToSuperview()
         
     }
@@ -164,6 +175,17 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
     func koloda(_ koloda: KolodaView, didSwipeCardAt index: Int, in direction: SwipeResultDirection) {
         // called whenever a card is swiped?? might be useful
+        
+        switch direction {
+        case .left:
+            FirebaseService.shared.userDislikedPost(userId: self.userId, postId:dataSource[index].postID!)
+        case .right:
+            FirebaseService.shared.userLikedPost(userId: self.userId, postId:dataSource[index].postID!)
+        default:
+            print("Invalid swipe")
+        }
+        
+        
         print("Swiped card \(index) to \(direction.rawValue)")
     }
     

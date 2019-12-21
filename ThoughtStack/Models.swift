@@ -35,9 +35,9 @@ class User {
         email = parameters["email"] as? String ?? ""
         nickName = parameters["nickName"] as? String ?? ""
         profilePicImageURL = parameters["profilePicImageURL"] as? String ?? ""
-        evaluatedPosts = [String]()
-        selfPosts = [String]()
-        likes = [String]()
+        evaluatedPosts = parameters[UserFields.evaluatedPosts.rawValue] as! [String]
+        selfPosts = parameters[UserFields.selfPosts.rawValue] as! [String]
+        likes = parameters[UserFields.likes.rawValue] as! [String]
     }
     
     func updateProfilePic(_ profilePic : String){
@@ -48,7 +48,7 @@ class User {
 
 class Post {
     
-    var postID : String?
+    var postID : String!
     let quote : String
     let author : String
     var category : String
@@ -83,4 +83,22 @@ enum StorageReferences : String {
 enum TableReferences : String {
     case users = "Users"
     case posts = "Posts"
+}
+enum UserFields : String {
+    case email
+    case name
+    case nickName
+    case evaluatedPosts
+    case likes
+    case profilePicImageURL
+    case selfPosts
+}
+
+enum PostFields : String {
+    case author
+    case category
+    case imageURL
+    case ownerId
+    case quote
+    case likes
 }
