@@ -38,11 +38,9 @@ class TabBar: UITabBarController {
         wallet.tabBarItem = UITabBarItem(title: "ThoughtWallet", image: UIImage(named: "wallet-outline"), selectedImage: UIImage(named: "wallet-filled"))
         
         
-        viewControllers = [dashboard,feed,wallet]
+        viewControllers = [feed,dashboard,wallet]
     }
     
-    
-    
-    
+
     
 }

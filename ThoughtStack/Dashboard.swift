@@ -8,27 +8,9 @@
 import UIKit
 import LBTATools
 
-/*
- This scene will show all the posts the user created in a feed like format.
- 
- User has the ability to see all of his posts and delete any he doesnt like.
- 
- Bonus:
- User can update any post he chooses to do so. It ll take him to create post scene with all the values prefilled allowing him to do his thing.
- 
- */
-
-
 
 class PostCell : LBTAListCell<Post> {
-    
-    
-    /*
-     Issues:
-     1. Quotes taking too much space for some reason
-     */
-    
-    
+        
     let profilePicSize = CGFloat(32)
     var userProfilePic = UIImageView(image: UIImage(named:"user-filled"), contentMode: .scaleAspectFill)
     

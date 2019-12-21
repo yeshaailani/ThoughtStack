@@ -18,16 +18,23 @@ import UIKit
  
  TODO:
  
+ beautify cards inside feed (card + feed)
+    resize those cards to take up the whole screen
+    handle ran out of cards for feed
  
- load username and profile pic of every user when u are showing his post.
+ 
+ handle no posts to show for tw and dashb both
+    
+ load username and profile pic of every user when u are showing his post. (feed + fbs)
+ integrate yeshas work on login,signup and create post
+ make 4 seperate users each with their own set of quotes with and without images (Utilities)
+ 
+ 
+ 
  test feed heavily....
  fix the issues with card swipes and overlays
  integrate yeshas work
  refactor
- 
- 
- handle empty dashboard,feed,thoughtwallet
- 
 
  */
 
@@ -68,7 +75,6 @@ class FirebaseService {
         ];
         */
         var user = params
-        
         
         if let image = optionalProfilePic {
             self.uploadProfilePicImage(image: image, completion: { error, downloadURL in
@@ -239,7 +245,7 @@ class FirebaseService {
             
             if error == nil && data != nil {
                 let imageData = data!
-                print("Profile pic retrieved!")
+//                print("Image downloaded!")
                 completion(UIImage(data:imageData),nil)
             }else
             {
@@ -253,91 +259,95 @@ class FirebaseService {
     }
     
     
-    fileprivate func getAllPosts(userId : String, completion : @escaping ([Post]?,Error?) -> Void ) {
+    fileprivate func getAllPosts(completion : @escaping ([String]?,Error?) -> Void ) {
 
         /*
-         returns every post in existence (minus their images if any)
+         returns every post-id in existence
          */
         
-        reference(to: .posts).getDocuments(completion: { (querySnapshot, err) in
-        if let err = err {
-            print("Error getting documents: \(err)")
-            completion(nil,nil)
+        reference(to: .posts).getDocuments(completion: { (querySnapshot, error) in
+        if error != nil || querySnapshot == nil {
+            print("Error getting documents: \(error)")
+            completion(nil,error)
+            return
         } else {
             
-            var posts = [Post]()
-            
+            var postIds = [String]()
+    
             for document in querySnapshot!.documents {
-                let data = document.data()
-                
-                let post = Post(parameters: data) // see if it maps properly and find some way to attach postId
-                post.postID = document.documentID
-                posts.append(post)
+                let profileId = document.documentID
+                postIds.append(profileId)
             }
-            print("Total quotes \(posts.count)")
-            completion(posts,nil)
+//            print("Total quotes \(postIds.count)")
+            completion(postIds,nil)
         }
         })
         
     }
     
-    
     fileprivate func getPostByIds(postIds: [String], completion : @escaping([Post]?,Error?) -> Void){
+        
+        // takes a list of post-ids, reconstructs a post model and attaches images to it.
         
         var posts = [Post]()
         let postDispatchGroup = DispatchGroup()
         
         for postId in postIds {
             
+            
+            postDispatchGroup.enter()
             reference(to: .posts).document(postId).getDocument(completion: {post,error in
-               
+    
                 if error == nil && post != nil {
                     
-                    let currentPost = Post(parameters: post?.data() ?? [String:Any]()) // fix later
+                    var currentPost = Post(parameters: post?.data() ?? [String:Any]()) // fix later
                     
-                    print("found qa:\(currentPost.author)")
+                    currentPost.postID = postId // this line is critical dont touch
                     
                     if currentPost.imageURL != nil {
                         
                     postDispatchGroup.enter()
+                    self.downloadImage(downloadURL: currentPost.imageURL!, completion: {
+                        image,error in
                         
-                        self.downloadImage(downloadURL: currentPost.imageURL!, completion: {
-                            image,error in
-                            
-                            if error != nil && image == nil {
-                                print("error downloading image")
-                                completion(nil,error)
-                                return
-                            }
-                            currentPost.image = image!
-                            posts.append(currentPost)
-                            postDispatchGroup.leave()
-                            
-                        })
+                        if error != nil && image == nil {
+                            print("error downloading image")
+                            completion(nil,error)
+                            return
+                        }
+                        currentPost.image = image!
+                        posts.append(currentPost)
+                        print("Return image qa: \(currentPost.author) count:\(posts.count)")
+                        postDispatchGroup.leave()
+                        
+                    })
                         
                     }
                     else {
                         posts.append(currentPost)
-                        print("got quote without image")
+                        print("Return nonimage qa: \(currentPost.author) count:\(posts.count)")
                     }
                     
-                    postDispatchGroup.notify(queue: .main) {
-                        print("Post retrieval with images complete! count:\(posts.count)")
-                        completion(posts,nil)
-                    }
-                     
-        
                 }
-                // TODO: handle errors later
+                
+            postDispatchGroup.leave()
+                
             })
             
         }
-        
-        print("Non image quotes done")
-        
-        
-        
-        
+        postDispatchGroup.notify(queue: .main) {
+        print("Reached notify group with \(posts.count)")
+        if (posts.count == postIds.count)
+        {
+            print("Post retrieval with images complete! count:\(posts.count)")
+            completion(posts,nil)
+            return
+        }
+        }
+            
+                            
+        print("All non image quotes done!")
+      
     }
     
     fileprivate func getPostOwners(userId: String, completion: @escaping (String?,UIImage?,Error?)->Void ){
@@ -358,7 +368,7 @@ class FirebaseService {
             let downloadURL = data?[UserFields.profilePicImageURL.rawValue] as? String ??
             FirebaseService.placeHolderUserProfilePic
             
-            
+
             self.downloadImage(downloadURL: downloadURL, completion: { image,error in
                 
                 if image == nil || error != nil {
@@ -366,14 +376,10 @@ class FirebaseService {
                     completion(nil,nil,error)
                 }
                 
-                print("Returning username and profilePicImage info")
+//                print("Returning username \(nickName) and profilePicImageNull \( (image?.size ?? CGSize.zero) == CGSize.zero)")
                 completion(nickName,image,nil)
             })
-            
-            
-            
         })
-        
         
     }
     
@@ -398,7 +404,8 @@ class FirebaseService {
                 }
                 
                 let currentUser = User(parameters: data!)
-                print("User \(currentUser.name) found!")
+                print("User \(currentUser.nickName) found with ppic as:\(currentUser.profilePicImageURL?.count ?? 0 > 0)")
+                
                 completion(currentUser,nil)
             }
         
@@ -469,7 +476,6 @@ class FirebaseService {
          and remove user id from posts likes
          */
         
-        
         reference(to: .users).document(userId).updateData([
             UserFields.evaluatedPosts.rawValue : FieldValue.arrayRemove([postId]),
             ],completion: { error in
@@ -501,7 +507,7 @@ class FirebaseService {
             }
         })
         
-    } // Issues with this
+    }
         
     func getUsersDashboard(userId : String, completion: @escaping ([Post]?,Error?)-> Void) {
         /*
@@ -532,11 +538,8 @@ class FirebaseService {
                                 post.postOwnerUserName = commonUserName
                                 post.postOwnerProfilePic = commonProfilePic
                             }
-                            
                             completion(posts,nil)
-                            
                         })
-                        
                         
                     })
                 }else
@@ -558,18 +561,23 @@ class FirebaseService {
     func getUserFeed(userId : String, completion: @escaping ([Post]?,Error?)-> Void){
         /*
          
-         TESTING REQUIRED!
+         Issues: Adding new content requires the feed to be aware of its own content with respect to backend. Needs some kind of snapshot listener i suppose.
+         
+         stuck in infinite loop :/
+         
+        TESTING REQUIRED!
          
         Initially get all post ids. Then filter out
         1. post ids present in selfPosts of user model
         2. post ids present in evaluatedPosts of user model
+        3. post ids previously liked
         
         For the post ids u currently have, attach images and then return
 
         */
         
-        self.getAllPosts(userId: userId, completion: { posts,error in
-            print("Got all quotes \(posts!.count)")
+        self.getAllPosts(completion: { posts,error in
+//            print("Got all quotes \(posts!.count)")
             self.getCurrentUser(userId: userId, completion: { user,error in
                 
                 if error != nil || user == nil || posts == nil {
@@ -578,48 +586,59 @@ class FirebaseService {
                     return
                 }
                 
-                let feedPosts = posts!.filter{ currentPost in
-                    if user!.evaluatedPosts.contains(currentPost.postID) || user!.selfPosts.contains(currentPost.postID){
-                        return false // remove all quotes u have seen/created
+                print("All \(posts?.count) UE: \(user!.evaluatedPosts.count) US: \(user!.selfPosts.count)")
+                
+                let feedPostIds = posts!.filter{ currentPost in
+                    if user!.evaluatedPosts.contains(currentPost) || user!.selfPosts.contains(currentPost) || user!.likes.contains(currentPost){
+                        return false // remove all quotes u have seen/created/liked
                     }
                     return true
                 }
                 
+                print("Remaining: \(feedPostIds.count)")
                 
-                print("Got feed quotes \(feedPosts.count)")
-                
-                let imageDispatchGroup = DispatchGroup() // REFACTOR ATTACHING IMAGES TO SEPERATE METHOD
-                let storage = Storage.storage()
+                self.getPostByIds(postIds: feedPostIds, completion: { posts, error in
                     
+                    if error != nil || posts == nil {
+                        print("error retrieving feed")
+                        return
+                    }
+                    
+                    let feedPosts = posts!
+    
+                    let imageDispatchGroup = DispatchGroup()
                     
                     for post in feedPosts {
-                                          
-                            if post.imageURL == nil {
-                                continue // no image for current post
+                    
+                        imageDispatchGroup.enter()
+                        
+                        self.getPostOwners(userId: post.ownerID, completion: {
+                            nickName,profilePic,error in
+                            
+                            if error != nil {
+                                return
                             }
                             
-                        imageDispatchGroup.enter()
-                   
-                        storage.reference(forURL:post.imageURL!).getData(maxSize: 2*1024*1024, completion: {
-                                data,error in
-                                
-                                if error != nil || data == nil {
-                                    print("error attaching image to post",error?.localizedDescription ?? "")
-                                    return
-                                }
-                                
-                                print("Attached image for post with author \(post.author)")
-                                post.image = UIImage(data:data!)
-                            print("image of size \(post.image?.size) loaded")
-                                imageDispatchGroup.leave()
-                            })
+                            post.postOwnerUserName = nickName!
+                            post.postOwnerProfilePic = profilePic
+                            imageDispatchGroup.leave()
+                        })
                         
-                        }
+                    }
+                    
                     
                     imageDispatchGroup.notify(queue: .main){
-                        print("Image retrieval complete!")
-                        completion(feedPosts,nil)
+                        if (posts!.count == feedPosts.count)
+                        {
+                            print("All settled. Profile pics attached! \(feedPosts.count)")
+                        completion(posts,nil)
+                        return
+                        }
                     }
+                    
+                })
+                
+
             })
             
             
@@ -671,10 +690,10 @@ class FirebaseService {
                         }
                         
                         postDispatchGroup.notify(queue: .main){
+                            
                             print("Got all posts alongwith their owners!")
                             completion(posts,nil)
                         }
-                        
                         
                         
                     })
@@ -694,12 +713,6 @@ class FirebaseService {
         
         
         
-    }
-    
-    func deletePost(userId:String, postID:Post){
-        /*
-         remove a post from current users
-         */
     }
     
     func getDashboardPostCount(userId:String, completion: @escaping (Int?,Error?)-> Void){
@@ -739,6 +752,21 @@ class FirebaseService {
                 completion(nil,error)
             }
             
+        })
+    }
+    
+    func getTotalPostCount(completion: @escaping (Int?,Error?)->Void){
+        reference(to: .posts).getDocuments(completion: { snapshot,error in
+            
+            if error != nil || snapshot == nil {
+                print("Couldnt get total post count!")
+                completion(nil,error)
+                return
+            }
+            
+            let postCount = snapshot?.documents.count ?? 0
+//            print("Total posts on server \(postCount)")
+            completion(postCount,nil)
         })
     }
     

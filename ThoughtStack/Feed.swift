@@ -6,23 +6,14 @@ import pop
 import TinyConstraints
 
 
-/*
- Issues:
- 
- 1. Need to resize card and the views within based on whether images are included or not
- 
- */
-
 class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
     
     var userId : String
     var spinner = SpinnerViewController()
+    var lastPostCount = 0
     
-    lazy var kolodaView : KolodaView = {
-        let view = KolodaView()
-        return view
-    }()
+    var kolodaView : KolodaView
     
     lazy var likeButton : UIButton = {
         
@@ -51,6 +42,7 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     init(userId : String){
         // refactor this if possible
         self.userId = userId
+        self.kolodaView = KolodaView() // maybe send size here?
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -70,39 +62,56 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
     required init?(coder: NSCoder) {
         self.userId = ""
+        self.kolodaView = KolodaView() // maybe send size here?
         super.init(coder: coder)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         self.setUpSpinner()
-        kolodaView.delegate = self
-        kolodaView.dataSource = self
-        
-        FirebaseService.shared.getUserFeed(userId: self.userId, completion: {posts,error in
-            
-            if error != nil || posts == nil {
-                print("Error couldnt retrieve posts!",error?.localizedDescription)
-                return
-            }
-                        
-            if let feedPosts = posts {
-                
-                let sortedPosts = feedPosts.sorted{ post1,post2 in
-                    return post1.timeStamp > post2.timeStamp
-                }
-                self.dataSource = sortedPosts
-                self.kolodaView.reloadData()
-                self.tearDownSpinner()
-            }
-            
-            
-        })
+        self.kolodaView.delegate = self
+        self.kolodaView.dataSource = self
+        self.checkPostCount() // setup datasource first
         
         setupNavigation()
         addViews()
         constrainViews()
+        
+    }
+    
+    
+    
+    func checkPostCount() {
+        
+
+        FirebaseService.shared.getTotalPostCount(completion: { totalPostCount,error in
+            
+            if error != nil || totalPostCount == nil{
+                print("Didnt get total post count!")
+                return
+            }
+            
+            if totalPostCount! != self.lastPostCount {
+                self.setUpSpinner()
+                self.lastPostCount = totalPostCount!
+                print("Loading up posts from backend... New count: \(self.lastPostCount)")
+                
+                FirebaseService.shared.getUserFeed(userId: self.userId, completion: {posts,error in
+                    
+                    if error != nil || posts == nil {
+                        print("Didnt get feed!")
+                        return
+                    }
+                        
+                    self.dataSource = posts!
+                    print("Loaded datasource with \(self.dataSource.count ) cards")
+                    self.kolodaView.reloadData()
+                    self.tearDownSpinner()
+                    print("All data sent!")
+                })
+            }
+        })
+        
     }
     
     func addViews(){
@@ -151,14 +160,13 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
         super.viewDidAppear(animated)
         print("Checking for new posts?")
         // method here will ensure feed is upto date
-        
+        self.checkPostCount()
         setupNavigation()
     }
     
     @objc func walletTapped(){
         self.parent?.navigationController?.pushViewController(ThoughtWallet(userId: self.userId), animated: true)
     }
-    
     
     @objc func likePost() {
         print("simul right swipe")
@@ -203,12 +211,14 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
     func koloda(_ koloda: KolodaView, didSwipeCardAt index: Int, in direction: SwipeResultDirection) {
         // called whenever a card is swiped?? might be useful
+        let postId = dataSource[index].postID ?? "invalid"
+        print("Card \(index) swiped \(direction) with pid \(postId)")
         
         switch direction {
         case .left:
-            FirebaseService.shared.userDislikedPost(userId: self.userId, postId:dataSource[index].postID!)
+            FirebaseService.shared.userDislikedPost(userId: self.userId, postId:postId)
         case .right:
-            FirebaseService.shared.userLikedPost(userId: self.userId, postId:dataSource[index].postID!)
+            FirebaseService.shared.userLikedPost(userId: self.userId, postId:postId)
         default:
             print("Invalid swipe")
         }
@@ -219,7 +229,9 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
     // MARK: Delegate protocol
     func koloda(_ koloda: KolodaView, viewForCardAt index: Int) -> UIView {
-        return Card(frame: view.frame, post: dataSource[index])
+        print("Attempting to load card at index \(index) out of \(dataSource.count)")
+        let card = Card(frame: view.frame, post: dataSource[index])
+        return card
     }
     
     func kolodaDidRunOutOfCards(_ koloda: KolodaView) {
@@ -241,7 +253,6 @@ class ExampleOverlayView: OverlayView {
     
     // these images are meant to be shown when swept left/right accordingly.
     
-
    lazy var overlayImageView: UIImageView = {
         [self] in
         
