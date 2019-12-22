@@ -35,7 +35,14 @@ class CreatePostViewController: UIViewController {
         
     }
     
-    
+    func resetForm() {
+        ImageView.image = nil
+        let tf = [quote,category,author]
+        for text in tf {
+            text?.text = ""
+        }
+        
+    }
     
     
     @IBAction func createPost(_ sender: Any) {
@@ -62,6 +69,7 @@ class CreatePostViewController: UIViewController {
                 
                 FirebaseService.shared.addPost(userId: userId, post: postData, optionalImage: ImageView.image, completion: {
                     self.showAlertBox(message: "Post Successfully uploaded!")
+                    self.resetForm()
                 });
             
             }

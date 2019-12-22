@@ -22,7 +22,23 @@ class TabBar: UITabBarController {
         
 //        Utilities.singleton.testFIR() // add quotes as abhi
         
-        let mockUserID = "uK4evBYAkmdU5KTGIn6c" // yesha id
+//        let mockUserID = "uK4evBYAkmdU5KTGIn6c" // yesha id
+        
+        var mockUserID : String
+        
+        if let creds = Utilities.singleton.load()
+        {
+        mockUserID = creds[UserFields.userId.rawValue]!
+        print("Userid: \(mockUserID)")
+        }
+        else
+        {
+            self.dismiss(animated: true, completion: nil)
+            return
+        }
+        
+        
+        
         
         let feed = Feed(userId: mockUserID) // in future take userId from persistent data or FIRAuth
         feed.tabBarItem = UITabBarItem(title: "Feed", image: UIImage(named: "grid-outline")!, selectedImage: UIImage(named: "grid-filled")!)
@@ -30,7 +46,11 @@ class TabBar: UITabBarController {
         let dashboard = Dashboard(userId: mockUserID) // TODO: take from persistent data later
         dashboard.tabBarItem = UITabBarItem(title: "Dashboard", image: UIImage(named: "user-outline")!, selectedImage: UIImage(named: "user-filled")!)
         
-        let createPost = self.storyboard?.instantiateViewController(withIdentifier: "CreatePostViewController") ?? UIViewController()
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let controller = storyboard.instantiateViewController(withIdentifier: "CreatePostViewController") ?? UIViewController()
+
+        let createPost = controller
         createPost.tabBarItem = UITabBarItem(title: "Create Post", image: UIImage(named: "plus-outline"), selectedImage: UIImage(named: "plus-filled"))
         
         

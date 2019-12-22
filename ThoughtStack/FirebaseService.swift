@@ -18,18 +18,13 @@ import UIKit
  
  TODO:
  
- beautify cards inside feed (card + feed)
-    resize those cards to take up the whole screen
-    handle ran out of cards for feed
  
+ handle blank backend
  
  handle no posts to show for tw and dashb both
     
- load username and profile pic of every user when u are showing his post. (feed + fbs)
- integrate yeshas work on login,signup and create post
  make 4 seperate users each with their own set of quotes with and without images (Utilities)
- 
- 
+
  // dashboard incomplete fields
  
  
@@ -50,6 +45,7 @@ class FirebaseService {
     
     func configure(){
         FirebaseApp.configure()
+        
     }
     
     private func reference(to tableref : TableReferences) -> CollectionReference{
@@ -731,10 +727,14 @@ class FirebaseService {
     func getDashboardPostCount(userId:String, completion: @escaping (Int?,Error?)-> Void){
         reference(to: .users).document(userId).getDocument(completion: { snapshot,error in
             
+            print("User id: \(userId)")
+            // address empty dashboard
             
             if error == nil {
                 
                 let selfPosts = snapshot?.data()![UserFields.selfPosts.rawValue] as? [String]
+                
+                // empty dashboard crashes here
                 let postCount = selfPosts?.count ?? 0
                 print("Currently dashboard has \(postCount) posts")
                 completion(postCount,nil)

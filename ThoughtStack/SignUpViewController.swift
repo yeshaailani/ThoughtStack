@@ -34,6 +34,8 @@ class SignUpViewController: UIViewController {
      
         if let creds = Utilities.singleton.load() {
             
+            print("E: \(creds[UserFields.email.rawValue]) U:\(creds[UserFields.userId.rawValue]) ")
+            
             if let email = creds[UserFields.email.rawValue], let userId = creds[UserFields.userId.rawValue] {
                 self.redirect()
             }
@@ -42,15 +44,22 @@ class SignUpViewController: UIViewController {
         
     }
     
-    var database = Firestore.firestore()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.autoredirect()
         self.imagePicker = ImagePicker(presentationController: self, delegate: self)
-        
+        self.autoFill()
     }// end load
     
+    func autoFill(){
+        name.text = "Abhijeet"
+        username.text = "prabhu150"
+        password.text = "123456"
+        confirmPassword.text = "123456"
+        email.text = "abhi@gmail.com"
+//        profilePicture.image = UIImage(named:"goku")! if picture is big the form malfunctions
+    }
     
     func validateFields() -> String? {
         
@@ -94,6 +103,8 @@ class SignUpViewController: UIViewController {
     }
     
     @IBAction func signup(_ sender: Any) {
+        
+        print("Attempting signup!")
         
         if let message = self.validateFields() {
             self.alertUser(message: message)
@@ -143,8 +154,6 @@ class SignUpViewController: UIViewController {
         }
     }
 
-
-    
     func signUpUser(){
         Auth.auth().createUser(withEmail: email.text!, password: password.text!) { (user, error) in
             if error == nil {
@@ -175,9 +184,10 @@ class SignUpViewController: UIViewController {
     }
     
     func redirect(){
-        self.present(UINavigationController(rootViewController: TabBar()), animated: true)
-    }
-    
+           let nav = UINavigationController(rootViewController: TabBar())
+           nav.modalPresentationStyle = .overFullScreen
+            self.parent?.present(nav, animated: true, completion: nil)
+   }
     
     func signInUser(){
         

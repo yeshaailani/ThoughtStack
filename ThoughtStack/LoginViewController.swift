@@ -30,11 +30,20 @@ class LoginViewController: UIViewController {
         if let creds = Utilities.singleton.load() {
             
             if let email = creds[UserFields.email.rawValue], let userId = creds[UserFields.userId.rawValue] {
-                self.present(UINavigationController(rootViewController: TabBar()), animated: true)
+                
+                self.redirect()
+            
+                
             }
             
         }
         
+    }
+    
+    func redirect(){
+        let nav = UINavigationController(rootViewController: TabBar())
+        nav.modalPresentationStyle = .overFullScreen
+        self.parent?.present(nav, animated: true, completion: nil)
     }
     
     
