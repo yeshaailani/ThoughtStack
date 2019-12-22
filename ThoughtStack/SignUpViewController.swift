@@ -72,11 +72,11 @@ class SignUpViewController: UIViewController,UITextFieldDelegate {
     
     func autoFill(){
         name.text = "Abhijeet"
-        username.text = "prabhu150"
+        username.text = "prabhu" + "99199"
         password.text = "123456"
         confirmPassword.text = "123456"
-        email.text = "abhi@gmail.com"
-        profilePicture.image = UIImage(named:"goku")!
+        email.text = username.text!  + "@gmail.com"
+        profilePicture.image = nil
     }
     
     func validateFields() -> String? {
@@ -189,10 +189,10 @@ class SignUpViewController: UIViewController,UITextFieldDelegate {
                     ]
                 
                 FirebaseService.shared.addUser(params: currentUser,optionalProfilePic: self.profilePicture.image,completion : {
+                    
                     self.setUpSpinner()
                     print("You have successfully signed up. Signing in current user...")
                     self.signInUser()
-                    
                 })
                 
                 

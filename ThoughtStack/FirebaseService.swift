@@ -82,7 +82,11 @@ class FirebaseService {
                 
                 let userId = self.reference(to: .users).document().documentID
                 
-                self.reference(to: .users).document(userId).setData(user)
+                self.reference(to: .users).document(userId).setData(user){ error in
+                    if error == nil {
+                        completion()
+                    }
+                }
             
                 Utilities.singleton.save(email: user[UserFields.email.rawValue] as! String, userId: userId) // save to persistent storage!
                 
@@ -92,8 +96,18 @@ class FirebaseService {
         {
             user[UserFields.profilePicImageURL.rawValue] = FirebaseService.placeHolderUserProfilePic
             
-            print("Adding user without a profile pic")
-            reference(to: .users).addDocument(data: user)
+            print("User without profile pic!")
+            let userId = reference(to: .users).document().documentID
+            
+            reference(to: .users).document(userId).setData(user){ error in
+                
+                if error == nil {
+                    print("Attached user without a profile pic")
+                    completion()
+                    Utilities.singleton.save(email: user[UserFields.email.rawValue] as! String, userId: userId)
+                }
+                
+            }
         }
         
 

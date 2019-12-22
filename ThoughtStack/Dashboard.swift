@@ -155,6 +155,12 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
             
              let newPostCount = postCount ?? 0
              print("Old posts count \(self.lastpostCount) New posts count: \(newPostCount)")
+             
+            if newPostCount == 0 {
+                self.lastpostCount = 0
+                self.noMorePostsLeft()
+                return
+            }
             
              if newPostCount != self.lastpostCount {
                 
