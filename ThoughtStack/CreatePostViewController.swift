@@ -8,11 +8,13 @@
 
 import UIKit
 import FirebaseFirestore
+import FirebaseAuth
 
-class CreatePostViewController: UIViewController {
+class CreatePostViewController: UIViewController,UITextFieldDelegate {
     
     var imagePicker: ImagePicker!
     var email:String!
+    var spinner = SpinnerViewController()
     
     @IBOutlet weak var ImageView: UIImageView!
     @IBOutlet weak var category: UITextField!
@@ -20,6 +22,12 @@ class CreatePostViewController: UIViewController {
     @IBOutlet weak var quote: UITextField!
 
     var database = Firestore.firestore()
+    
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
     
     @IBAction func selectImage(_ sender: UIButton) {
          self.imagePicker.present(from: sender)
@@ -44,6 +52,19 @@ class CreatePostViewController: UIViewController {
         
     }
     
+    func tearDownSpinner(){
+        spinner.willMove(toParent: nil)
+        spinner.view.removeFromSuperview()
+        spinner.removeFromParent()
+    }
+    
+    func setUpSpinner(){
+        addChild(spinner)
+        spinner.view.frame = view.frame
+        view.addSubview(spinner.view)
+        spinner.didMove(toParent: self)
+    }
+    
     
     @IBAction func createPost(_ sender: Any) {
        
@@ -59,6 +80,7 @@ class CreatePostViewController: UIViewController {
             if let email = creds?[UserFields.email.rawValue], let userId = creds?[UserFields.userId.rawValue]
             {
             
+                self.setUpSpinner()
                 let postData : [String:Any] = [
                     PostFields.author.rawValue : author.text!,
                     PostFields.category.rawValue : category.text!,
@@ -68,8 +90,10 @@ class CreatePostViewController: UIViewController {
                 ]
                 
                 FirebaseService.shared.addPost(userId: userId, post: postData, optionalImage: ImageView.image, completion: {
+                    self.tearDownSpinner()
                     self.showAlertBox(message: "Post Successfully uploaded!")
                     self.resetForm()
+                    
                 });
             
             }
@@ -79,8 +103,36 @@ class CreatePostViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.imagePicker = ImagePicker(presentationController: self, delegate: self)
+        let textFields = [quote,category,author]
+        
+        for textField in textFields {
+            textField?.delegate = self
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.parent?.navigationItem.title = "Create Post"
+        self.parent?.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named:"logout")!, style: .plain, target: self, action: #selector(logout))
+                  
+    }
+    
+    
+    @objc func logout(){
+        
+        do{
+            print("Logging out!")
+            try Auth.auth().signOut()
+            Utilities.singleton.clearCache() // remove from persistent storage
+            self.parent?.dismiss(animated: true, completion: nil)
+            
+        }catch let error as NSError {
+            print("Logout Error",error.localizedRecoverySuggestion)
+        }
+        
         
     }
+    
     
     
     func showAlertBox(message:String)
