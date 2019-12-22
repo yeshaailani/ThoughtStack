@@ -49,6 +49,8 @@ class TabBar: UITabBarController {
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "CreatePostViewController") ?? UIViewController()
+        //just solved this one
+        //just done
 
         let createPost = controller
         createPost.tabBarItem = UITabBarItem(title: "Create Post", image: UIImage(named: "plus-outline"), selectedImage: UIImage(named: "plus-filled"))
