@@ -62,16 +62,11 @@ class FirebaseService {
     func addUser(params : [String : Any],optionalProfilePic: UIImage? = nil,completion: @escaping () -> ()) {
     
         /*
-        let params : [String : Any] = [
-            UserFields.name.rawValue : "abhi",
-            UserFields.email.rawValue : "abc@gm.com",
-            UserFields.nickName.rawValue : "abc15",
-            UserFields.profilePicImageURL.rawValue : -1,
-            UserFields.evaluatedPosts.rawValue : [String](),
-            UserFields.likes.rawValue : [String](),
-            UserFields.selfPosts.rawValue : [String]()
-        ];
-        */
+         Add user and an optional profile pic. If profile pic is not included then a link to
+         placeholder image is uploaded to the storage so that some image always shows up for
+         the user's profile pic
+         */
+        
         var user = params
         
         if let image = optionalProfilePic {
@@ -115,8 +110,11 @@ class FirebaseService {
     
     func addPost(userId: String,post: [String : Any],optionalImage : UIImage? = nil, completion: @escaping () -> Void){
         
+        /*
+        Add post and an optional post pic. If post pic is not included, just the remaining section is stored in firestore. If it is included, then the image is stored in firebase storage and its downloadURL is stored in firestore
+        */
+
         var data = post
-        
         data[PostFields.timeStamp.rawValue] = Date().millisecondsSince1970 // added for sort by recent
         
         if let image = optionalImage {
@@ -132,11 +130,8 @@ class FirebaseService {
                 if downloadURL != nil
                 {
                     data[PostFields.imageURL.rawValue] = downloadURL
-            
                     let newPostId = self.reference(to: .posts).document().documentID
-                    
                     self.reference(to: .posts).document(newPostId).setData(data)
-                    
                     self.reference(to: .users).document(userId).updateData([
                         UserFields.selfPosts.rawValue : FieldValue.arrayUnion([newPostId])
                     ])
@@ -163,6 +158,8 @@ class FirebaseService {
         
     }
     
+    
+    // following two methods upload the image to proper destinations and return downloadURLs
     private func uploadPostImage(image: UIImage, completion: @escaping (Error?,String?) -> Void){
         
         
@@ -189,9 +186,7 @@ class FirebaseService {
         }
         
         metadata.contentType = ext
-        
         let postsRef = storage(to: .posts).child(Date().millisecondsSince1970)
-        
         let _ = postsRef.putData(data, metadata: metadata) { metadata,error in
             
             if let _ = error {
@@ -264,6 +259,8 @@ class FirebaseService {
     
     private func downloadImage(downloadURL : String, completion: @escaping (UIImage?,Error?)->Void){
         
+        // Takes downloadURL as input and returns corresponding image as output
+        
         Storage.storage().reference(forURL: downloadURL).getData(maxSize: FirebaseService.maxImageUploadSize, completion: { data,error in
             
             if error == nil && data != nil {
@@ -286,8 +283,10 @@ class FirebaseService {
 
         /*
          returns every post-id in existence.
+         Treats each postid as a seperate post regardless of whether that postId maps to proper post.
          
-         Treats each postid as a seperate post
+         
+         NOTE: Its important that the data stored on the backend follows the proper predefined schematic as per our app's models, else the app misbehaves
          */
         
         reference(to: .posts).getDocuments(completion: { (querySnapshot, error) in
@@ -312,7 +311,7 @@ class FirebaseService {
     
     fileprivate func getPostByIds(postIds: [String], completion : @escaping([Post]?,Error?) -> Void){
         
-        // takes a list of post-ids, reconstructs a post model and attaches images to it.
+        // takes a list of post-ids, converts it into post models and attaches images if any to it.
         
         var posts = [Post]()
         let postDispatchGroup = DispatchGroup()
@@ -373,7 +372,7 @@ class FirebaseService {
         
         postDispatchGroup.notify(queue: .main) {
             print("Reached notify group with \(posts.count)")
-            if (posts.count == postIds.count)
+            if (posts.count == postIds.count) // potential for bugs here if backend has lots of false posts (postids that dont represent actual posts)
             {
                 print("Post retrieval with images complete! count:\(posts.count)")
                 completion(posts,nil)
@@ -381,10 +380,9 @@ class FirebaseService {
             }
         
         }
-            
-                            
+                                        
         print("All non image quotes done!")
-//        completion(nil,nil)
+
       
     }
     
@@ -401,12 +399,11 @@ class FirebaseService {
             }
             
             let data = snap!.data()
-            let nickName = data?[UserFields.nickName.rawValue] as? String ?? UserFields.nickName.rawValue
+            let nickName = data?[UserFields.nickName.rawValue] as? String ?? "(user-deleted)"
             
             let downloadURL = data?[UserFields.profilePicImageURL.rawValue] as? String ??
             FirebaseService.placeHolderUserProfilePic
             
-
             self.downloadImage(downloadURL: downloadURL, completion: { image,error in
                 
                 if image == nil || error != nil {
@@ -422,6 +419,7 @@ class FirebaseService {
     }
     
     func getCurrentUser(userId:String,completion: @escaping (User?,Error?) -> Void ){
+        // return user model from userId
         
         reference(to: .users).document(userId).getDocument{ snapshot,error in
         
@@ -453,10 +451,10 @@ class FirebaseService {
     
     func userLikedPost(userId:String, postId:String){
         /*
-         
-         add post id to list of user's liked posts
-         add post id to user's evaluated posts
-         add user id to list of post's likes
+         Take foll steps on right swipe for post:
+            add post id to list of user's liked posts
+            add post id to user's evaluated posts
+            add user id to list of post's likes
          
          */
         
@@ -488,6 +486,7 @@ class FirebaseService {
     
     func userDislikedPost(userId:String, postId: String){
         /*
+         On left swipe for post
          add postID to user's list of evaluated posts
          */
         reference(to: .users).document(userId).updateData([
@@ -506,11 +505,12 @@ class FirebaseService {
     
     func userHitUndo(userId:String,postId: String){
         /*
+         when user taps undo:
          remove postid from user's evaluated posts
          check if user liked that post before?
          
-         if no, return
-         if yes, remove post id from users likes
+            if no, return
+            if yes, remove post id from users likes
          and remove user id from posts likes
          */
         
@@ -549,10 +549,11 @@ class FirebaseService {
         
     func getUsersDashboard(userId : String, completion: @escaping ([Post]?,Error?)-> Void) {
         /*
+         When user taps dashboard tab:
          1. get current user
-         2. get all posts from his self Posts
-         3. attach post image to each post model
-         4. attach profile pic and username to each post model
+         2. get all postids from his self Posts
+         3. get post model from those ids and attach image to each post model
+         4. attach current user's profile pic and username to each post model
          
          */
         
@@ -599,21 +600,17 @@ class FirebaseService {
     func getUserFeed(userId : String, completion: @escaping ([Post]?,Error?)-> Void){
         /*
          
-         Issues:  :/
-         
-        TESTING REQUIRED!
-         
         Initially get all post ids. Then filter out
         1. post ids present in selfPosts of user model
         2. post ids present in evaluatedPosts of user model
         3. post ids previously liked
         
-        For the post ids u currently have, attach images and then return
+        For the remaining post ids, attach images and then return
 
         */
         
         self.getAllPosts(completion: { posts,error in
-//            print("Got all quotes \(posts!.count)")
+
             self.getCurrentUser(userId: userId, completion: { user,error in
                 
                 if error != nil || user == nil || posts == nil {
@@ -749,6 +746,9 @@ class FirebaseService {
         
     }
     
+    
+    // following methods return count for dashboard / feed / thoughtwallet to keep track of incoming new posts and when its appropriate to call get methods for each
+    
     func getDashboardPostCount(userId:String, completion: @escaping (Int?,Error?)-> Void){
         reference(to: .users).document(userId).getDocument(completion: { snapshot,error in
             
@@ -830,7 +830,7 @@ class FirebaseService {
         })
     }
     
-    
+    // get userId corresponding to email to store in persistent storage
     func getUserIDFromEmail(email:String,completion : @escaping (String?,Error?) -> Void){
         reference(to: .users).whereField(UserFields.email.rawValue, isEqualTo:email).getDocuments(completion:
             { (snapshot,error) in
@@ -882,70 +882,8 @@ class FirebaseService {
         
         
     }
-    
-    
-    
-    
-    /*
-     Firebase objectives:
-     
-     create insert update delete
-     
-     create -> adduser,addpost done
-     update -> left swipe, right swipe, undo, delete from tw/selffeed
-     delete -> someone deletes their post
-    
-     find all posts by pid
-     
-     if all pids exist, then return those posts.
-     
-     does firebase throw error for pid not found or does it simply return nil?
-     
-     
-     Handle delete:
-     
-     when you delete from dashboard:
-     1. remove item from content list of model and reflect that on front end
-     2. remove item id from content list of current user on backend
-     3. remove that item from posts table using item id.
-     
-     when you delete from thoughtwallet:
-     1. remove item from likes list of model and reflect that on front end
-     2. remove item id from likes list of current user on backend
-     
-     this wont affect feed at all since that will always retrieve latest list of ids from the backend
-     
-     when others tw is loaded:
-     1. get list of ids from current users likes list.
-     2. if firebase doesnt throw exception, simply display the items u can find and make others nil
-     3. if it does, then
-     get list of ids for every post in the table and cross reference the two lists
-     4. if user likes a post that currently doesnt exist then remove the item from his likes list on the front end
-     5. once both lists are cross referenced, if needed update the current users likes on the backend
-     6. display the posts u see
-     
-     
-     feed being loaded:
-     
-     1. get all pids from posts table
-     2. filter out those that have already been evaluated
-     3. display the list
-     
-     
-     dashboard being loaded:
-     
-        
-     
-     Handle Undos:
-     
-     
-     */
-    
+
 }
-
-
-
-
 extension Date {
     var millisecondsSince1970:String {
         return String(Int64((self.timeIntervalSince1970 * 1000.0).rounded()))

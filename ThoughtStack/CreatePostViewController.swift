@@ -10,9 +10,6 @@ import UIKit
 import FirebaseFirestore
 import FirebaseAuth
 
-// logout didnt work
-
-
 class CreatePostViewController: UIViewController,UITextFieldDelegate {
     
     var imagePicker: ImagePicker!
@@ -23,9 +20,8 @@ class CreatePostViewController: UIViewController,UITextFieldDelegate {
     @IBOutlet weak var category: UITextField!
     @IBOutlet weak var author: UITextField!
     @IBOutlet weak var quote: UITextField!
-
-    var database = Firestore.firestore()
     
+    var database = Firestore.firestore()
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
@@ -33,7 +29,7 @@ class CreatePostViewController: UIViewController,UITextFieldDelegate {
     }
     
     @IBAction func selectImage(_ sender: UIButton) {
-         self.imagePicker.present(from: sender)
+        self.imagePicker.present(from: sender)
     }
     
     func alertUser(message : String){
@@ -68,21 +64,20 @@ class CreatePostViewController: UIViewController,UITextFieldDelegate {
         spinner.didMove(toParent: self)
     }
     
-    
     @IBAction func createPost(_ sender: Any) {
-       
+        
         
         if self.author.text == "" || self.category.text == "" || self.quote.text == "" {
             self.alertUser(message: "Please enter all the fields!")
         }
         else
         {
-        
+            
             let creds = Utilities.singleton.load()
             
             if let email = creds?[UserFields.email.rawValue], let userId = creds?[UserFields.userId.rawValue]
             {
-            
+                
                 self.setUpSpinner()
                 let postData : [String:Any] = [
                     PostFields.author.rawValue : author.text!,
@@ -98,7 +93,7 @@ class CreatePostViewController: UIViewController,UITextFieldDelegate {
                     self.resetForm()
                     
                 });
-            
+                
             }
         }
     }
@@ -118,9 +113,8 @@ class CreatePostViewController: UIViewController,UITextFieldDelegate {
         self.parent?.navigationItem.title = "Create Post"
         self.parent?.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named:"logout")!, style: .plain, target: self, action: #selector(logout))
         self.parent?.navigationItem.rightBarButtonItem = nil
-                  
+        
     }
-    
     
     @objc func logout(){
         
@@ -145,13 +139,13 @@ class CreatePostViewController: UIViewController,UITextFieldDelegate {
         alertController.addAction(defaultAction)
         
         self.present(alertController, animated: true, completion: nil)
-       
+        
     }
-
+    
 }//end class
 
 extension CreatePostViewController: ImagePickerDelegate {
-
+    
     func didSelect(image: UIImage?) {
         self.ImageView.image = image
     }

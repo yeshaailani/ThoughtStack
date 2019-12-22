@@ -238,9 +238,6 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
             print("Logout Error",error.localizedRecoverySuggestion)
         }
         
-        
-        
-        // auth logic here
     }
             
     @objc func walletTapped(){

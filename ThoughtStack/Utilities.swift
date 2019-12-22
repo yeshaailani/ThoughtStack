@@ -143,7 +143,6 @@ class Utilities {
        
         print("Going to test \(quotes.count) quotes")
         
-        
         var begin = startIndex , end = endIndex
         
         while(begin < end){
@@ -158,11 +157,6 @@ class Utilities {
         
         return
     
-//        for (index,quote) in quotes.enumerated() {
-//            FirebaseService.shared.addPost(userId : userId,post: quote,optionalImage: UIImage(named: quoteImages[index]),completion: {
-//                print("Post added succesfully!")
-//            })
-//        }
         
     }
     
@@ -178,7 +172,6 @@ class Utilities {
         self.testFIR(userId: user3, startIndex: 12, endIndex: 18) // 0 to 6
         
         self.testFIR(userId: user4, startIndex: 18, endIndex: 24) // 0 to 6
-        
         
         
     }

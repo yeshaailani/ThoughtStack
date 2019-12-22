@@ -72,7 +72,7 @@ class SignUpViewController: UIViewController,UITextFieldDelegate {
     
     func autoFill(){
         name.text = "Abhijeet"
-        username.text = "prabhu" + "99199"
+        username.text = "prabhu" + "99199" // change this number for unique nickname/email
         password.text = "123456"
         confirmPassword.text = "123456"
         email.text = username.text!  + "@gmail.com"
@@ -232,18 +232,8 @@ class SignUpViewController: UIViewController,UITextFieldDelegate {
             
             if error == nil {
                 
-                //Print into the console if successfully logged in
                 print("You have successfully logged in")
-                
-                            
-                //Go to the HomeViewController if the login is sucessful
-//                let vc = self.storyboard?.instantiateViewController(withIdentifier: "CreatePostViewController")
-//
-//                self.present(vc!, animated: true, completion: nil)
-                
                 self.redirect()
-//                self.navigationController?.pushViewController(CreatePostViewController(), animated: true)
-//
                 print("logged in :)")
                 
             } else {

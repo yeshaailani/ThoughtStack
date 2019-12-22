@@ -12,7 +12,7 @@ import FirebaseAuth
 class LoginViewController: UIViewController,UITextFieldDelegate {
     @IBOutlet weak var email: UITextField!
     @IBOutlet weak var password: UITextField!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.autoredirect()
@@ -40,11 +40,11 @@ class LoginViewController: UIViewController,UITextFieldDelegate {
     
     
     func autoredirect(){
-     
+        
         if let creds = Utilities.singleton.load() {
             
             if let email = creds[UserFields.email.rawValue], let userId = creds[UserFields.userId.rawValue] {
-            
+                
                 self.redirect()
             }
             
@@ -78,10 +78,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate {
                     
                     //Print into the console if successfully logged in
                     print("You have successfully logged in")
-                    
-                    
                     FirebaseService.shared.getUserIDFromEmail(email: self.email.text!, completion: { userId, error in
-                        
                         
                         if error == nil && userId != nil {
                             print("Saving to persistent storage!")
@@ -107,6 +104,6 @@ class LoginViewController: UIViewController,UITextFieldDelegate {
             }
         }
     }
-  
+    
 }// end class
 

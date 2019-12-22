@@ -120,26 +120,16 @@ class Card: UIView {
         let widthOffset = width * 0.05, heightOffset = height * 0.1
         let cardWidth = width - 2 * widthOffset, cardHeight = 0.8 * height
         var arrangedSubviews = [UIView]()
-        
-//        containerView.edgesToSuperview()
-//        containerView.size(self.frame.size)
-        
-//        cardContainer.edges(to: containerView, insets: .init(top: heightOffset, left: widthOffset, bottom: 2.5 * heightOffset ,right: widthOffset))
-        
+                
         cardContainer.edgesToSuperview()
-        
         cardContainer.layer.cornerRadius = cardHeight / 24
         cardContainer.clipsToBounds = true
         cardContainer.layer.masksToBounds = true
         cardContainer.layer.borderColor = UIColor.black.cgColor
         cardContainer.layer.borderWidth = 1.0
         
-        
-        
-        
         if let quoteImageView = quoteOptionalImageView {
 
-//            quoteImageView.centerX(to: cardContainer)
             quoteImageView.top(to:cardContainer)
             quoteImageView.edges(to: cardContainer,excluding: [.top,.bottom],insets:.zero)
             quoteImageView.height(imageHeight)
@@ -165,7 +155,6 @@ class Card: UIView {
         
         arrangedSubviews += [profileContainer,quoteText,author]
         cardContainer.stack(arrangedSubviews,axis:.vertical)
-//        containerView.stack([cardContainer], axis: .vertical)
         
     }
     

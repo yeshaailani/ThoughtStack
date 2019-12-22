@@ -1,14 +1,7 @@
-
-
 import UIKit
 import Koloda
 import pop
 import TinyConstraints
-
-
-/*
- crashed @ feed
- */
 
 class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
@@ -43,7 +36,7 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     lazy var emptyPostInfo = UIView()
     
     fileprivate var dataSource = [Post]()
-        
+    
     init(userId : String){
         // refactor this if possible
         self.userId = userId
@@ -106,10 +99,9 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
                         print("Didnt get feed!",error?.localizedDescription)
                         return
                     }
-                        
+                    
                     
                     if posts == nil || posts?.count ?? 0 == 0 {
-                        // no posts left
                         
                         self.noMorePostsLeft()
                         self.tearDownSpinner()
@@ -126,7 +118,7 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
                 })
             }
         })
-    
+        
     }
     
     func noMorePostsLeft(){
@@ -250,7 +242,7 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     }
     
     func koloda(_ koloda: KolodaView, didSwipeCardAt index: Int, in direction: SwipeResultDirection) {
-        // called whenever a card is swiped?? might be useful
+        // called whenever a card is swiped.
         let postId = dataSource[index].postID ?? "invalid"
         print("Card \(index) swiped \(direction) with pid \(postId)")
         
@@ -292,11 +284,11 @@ class ExampleOverlayView: OverlayView {
     
     // these images are meant to be shown when swept left/right accordingly.
     
-   lazy var overlayImageView: UIImageView = {
+    lazy var overlayImageView: UIImageView = {
         [self] in
         
-        var imageView = UIImageView(frame: self.bounds) // since this was supposed to be an outlet you must add one somehow and link it here.
-    
+        var imageView = UIImageView(frame: self.bounds)
+        
         imageView.contentMode = .scaleAspectFit
         self.addSubview(imageView)
         
@@ -324,5 +316,5 @@ class ExampleOverlayView: OverlayView {
             }
         }
     }
-
+    
 }
