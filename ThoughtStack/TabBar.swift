@@ -38,7 +38,22 @@ class TabBar: UITabBarController {
         wallet.tabBarItem = UITabBarItem(title: "ThoughtWallet", image: UIImage(named: "wallet-outline"), selectedImage: UIImage(named: "wallet-filled"))
         
         
-        viewControllers = [feed,dashboard,wallet]
+        let cardDemo = UIViewController()
+        
+        let mockQuotes = Utilities.singleton.getMockQuotes()
+        
+        let card = Card(frame: .init(x: 0, y: 0, width: cardDemo.view.frame.width, height: cardDemo.view.frame.height), post: mockQuotes[0])
+        
+        cardDemo.view = card
+        
+        
+        cardDemo.tabBarItem = UITabBarItem(title: "CardDemo", image: UIImage(named: "wallet-outline"), selectedImage: UIImage(named: "wallet-filled"))
+        
+        
+        viewControllers = [cardDemo,feed,dashboard,wallet]
+        
+        
+        
     }
     
 

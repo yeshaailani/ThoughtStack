@@ -19,6 +19,6 @@ class CreatePost: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
            super.viewDidAppear(animated)
            parent?.navigationItem.title = "Create Post"
-       }
+   }
     
 }

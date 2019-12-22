@@ -11,13 +11,11 @@
  
  Issues:
  
+ 
+ Bit laggy tbh
+ 
  TW got zero posts
  Cards have hardcoded username and profile pics
- 
- thoughtwallet
- fix username and profile pic issue at thoughtwallet
- add spinner to thoughtwallet
- 
  
  */
 

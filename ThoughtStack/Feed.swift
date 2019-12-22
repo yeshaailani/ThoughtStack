@@ -69,13 +69,13 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setUpSpinner()
+        self.checkPostCount() // setup datasource first
         self.kolodaView.delegate = self
         self.kolodaView.dataSource = self
-        self.checkPostCount() // setup datasource first
         
+        self.addViews()
+        self.constrainViews()
         setupNavigation()
-        addViews()
-        constrainViews()
         
     }
     
@@ -182,6 +182,13 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
         print("undo simul")
         
         let lastCard = kolodaView.currentCardIndex - 1 > -1 ? kolodaView.currentCardIndex - 1 : 0;
+        
+        if lastCard < 0 || lastCard >= dataSource.count {
+            print("Index out of bounds")
+            return
+        }
+        
+        
         FirebaseService.shared.userHitUndo(userId: userId, postId: dataSource[lastCard].postID)
         kolodaView.revertAction()
     }
@@ -206,7 +213,7 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
     func koloda(_ koloda: KolodaView, viewForCardOverlayAt index: Int) -> OverlayView? {
         // setup a uiview to show an image for left and right swipes
-        return ExampleOverlayView(frame: view.frame)
+        return ExampleOverlayView(frame: .init(x: 0, y: 0, width: view.frame.width, height: 300))
     }
     
     func koloda(_ koloda: KolodaView, didSwipeCardAt index: Int, in direction: SwipeResultDirection) {
@@ -222,7 +229,6 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
         default:
             print("Invalid swipe")
         }
-        
         
         print("Swiped card \(index) to \(direction.rawValue)")
     }

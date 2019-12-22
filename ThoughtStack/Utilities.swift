@@ -20,7 +20,7 @@ class Utilities {
         let userID = "oG7weadM3FHXhb9XyJBC"
         
         let quoteText = [
-            "Dont cry because its over, smile because it happened",
+            "Dont cry because its over, smile because it happened.",
             "Every man is guilty of the good he did not do",
             "Life is 10% what happens to you and 90% how you react to it.",
             "Quality is not an act, it is a habit",
@@ -66,10 +66,11 @@ class Utilities {
     }()
     
     var quoteImages = [
-               "cry-smile-over",
-               "guilty-of-not-do",
-                 "life-10-9011",
-                 "quality-act-habit11",
+//         "slow-dont-matter-confucius",
+        "cry-smile-over",
+               "guilty-of-not-do11",
+                 "life-10-90",
+                 "quality-act-habit",
                  "slow-dont-matter-confucius",
                  "today-fun",
                  "well-done-well-said",
@@ -109,6 +110,9 @@ class Utilities {
             currPost.numLikes = [String]()
             posts.append(currPost)
         }
+        
+        posts[0].postID = "HKNpoo196Jwt79JZNVW6"
+        posts[2].postID = "NBlcwSG2zbfnshkQeEkI"
         
         return posts
         
