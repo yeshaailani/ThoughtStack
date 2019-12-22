@@ -39,11 +39,9 @@ class FirebaseService {
     
     private init(){}
     static let shared =  FirebaseService()
-    static let placeHolderUserProfilePic = "https://firebasestorage.googleapis.com/v0/b/thoughtstack-91089.appspot.com/o/profile-pics%2Ficon.png?alt=media&token=4dace66b-0e97-430e-94e4-8de24b2b1d48" //changed path of placeholder, was giving error
+    static let placeHolderUserProfilePic = "https://firebasestorage.googleapis.com/v0/b/thoughtstack-91089.appspot.com/o/profile-pics%2Fplaceholder.jpg?alt=media&token=91b4c2f4-2946-4a08-950c-6c7a708ed996" //changed path of placeholder, was giving error
     
-    
-    
-    static let maxImageUploadSize : Int64 = 2 * 1024 * 1024 // 2 MB
+    static let maxImageUploadSize : Int64 = 12 * 1024 * 1024 // max size object 12 MB
     
     func configure(){
         FirebaseApp.configure()
@@ -273,12 +271,14 @@ class FirebaseService {
     fileprivate func getAllPosts(completion : @escaping ([String]?,Error?) -> Void ) {
 
         /*
-         returns every post-id in existence
+         returns every post-id in existence.
+         
+         Treats each postid as a seperate post
          */
         
         reference(to: .posts).getDocuments(completion: { (querySnapshot, error) in
         if error != nil || querySnapshot == nil {
-            print("Error getting documents: \(error)")
+            print("Error getting documents: \(error?.localizedDescription ?? "")")
             completion(nil,error)
             return
         } else {
@@ -305,39 +305,49 @@ class FirebaseService {
         
         for postId in postIds {
             
-            
             postDispatchGroup.enter()
+            
             reference(to: .posts).document(postId).getDocument(completion: {post,error in
     
                 if error == nil && post != nil {
                     
-                    var currentPost = Post(parameters: post?.data() ?? [String:Any]()) // fix later
                     
-                    currentPost.postID = postId // this line is critical dont touch
+                    if post!.data() == nil {
+                        // something didnt match up on the backend, so ignore the post
+                        return
+                    }
                     
-                    if currentPost.imageURL != nil {
+                    if let data = post!.data() {
+                        var currentPost = Post(parameters: data)
+//                        currentPost.postID = postId // this line is critical dont touch
                         
-                    postDispatchGroup.enter()
-                    self.downloadImage(downloadURL: currentPost.imageURL!, completion: {
-                        image,error in
-                        
-                        if error != nil && image == nil {
-                            print("error downloading image")
-                            completion(nil,error)
-                            return
+                        if currentPost.imageURL != nil {
+                            
+                        postDispatchGroup.enter()
+                            
+                        self.downloadImage(downloadURL: currentPost.imageURL!, completion: {
+                            image,error in
+                            
+                            if error != nil && image == nil {
+                                print("error downloading image")
+                                completion(nil,error)
+                                return
+                            }
+                            currentPost.image = image!
+                            posts.append(currentPost)
+                            print("Return image qa: \(currentPost.author) count:\(posts.count)")
+                            postDispatchGroup.leave()
+                            
+                        })
+                            
                         }
-                        currentPost.image = image!
-                        posts.append(currentPost)
-                        print("Return image qa: \(currentPost.author) count:\(posts.count)")
-                        postDispatchGroup.leave()
-                        
-                    })
+                        else {
+                            posts.append(currentPost)
+                            print("Return nonimage qa: \(currentPost.author) count:\(posts.count)")
+                        }
                         
                     }
-                    else {
-                        posts.append(currentPost)
-                        print("Return nonimage qa: \(currentPost.author) count:\(posts.count)")
-                    }
+                    
                     
                 }
                 
@@ -346,18 +356,21 @@ class FirebaseService {
             })
             
         }
+        
         postDispatchGroup.notify(queue: .main) {
-        print("Reached notify group with \(posts.count)")
-        if (posts.count == postIds.count)
-        {
-            print("Post retrieval with images complete! count:\(posts.count)")
-            completion(posts,nil)
-            return
-        }
+            print("Reached notify group with \(posts.count)")
+            if (posts.count == postIds.count)
+            {
+                print("Post retrieval with images complete! count:\(posts.count)")
+                completion(posts,nil)
+                return
+            }
+        
         }
             
                             
         print("All non image quotes done!")
+//        completion(nil,nil)
       
     }
     
@@ -492,7 +505,7 @@ class FirebaseService {
             ],completion: { error in
                 
                 if error != nil {
-                    print("Error adding post to likes/eval posts!",error?.localizedDescription)
+                    print("Error adding post to likes/eval posts!",error?.localizedDescription ?? "")
                     return
                 }
 
@@ -592,7 +605,7 @@ class FirebaseService {
             self.getCurrentUser(userId: userId, completion: { user,error in
                 
                 if error != nil || user == nil || posts == nil {
-                    print("Couldnt get post/user")
+                    print("Couldnt get post/user",error?.localizedDescription)
                     completion(nil,error)
                     return
                 }
@@ -722,8 +735,6 @@ class FirebaseService {
             
         })
         
-        
-        
     }
     
     func getDashboardPostCount(userId:String, completion: @escaping (Int?,Error?)-> Void){
@@ -734,9 +745,16 @@ class FirebaseService {
             
             if error == nil {
                 
-                let selfPosts = snapshot?.data()![UserFields.selfPosts.rawValue] as? [String]
                 
-                // empty dashboard crashes here
+                if snapshot == nil || snapshot?.data() == nil {
+                    print("Either user hasnt posted anything or the field doesnt exist")
+                    completion(0,nil)
+                    return
+                }
+                
+                let selfPostJSON = snapshot!.data()!
+                let selfPosts = selfPostJSON[UserFields.selfPosts.rawValue] as? [String]
+                
                 let postCount = selfPosts?.count ?? 0
                 print("Currently dashboard has \(postCount) posts")
                 completion(postCount,nil)
@@ -755,7 +773,15 @@ class FirebaseService {
         reference(to: .users).document(userId).getDocument(completion: { snapshot,error in
             
             if error == nil {
-                let selfPosts = snapshot?.data()![UserFields.likes.rawValue] as? [String]
+                
+                if snapshot == nil || snapshot!.data() == nil {
+                    // error handling
+                    print("TW either has zero posts or the field doesnt exist on backend")
+                    completion(0,nil)
+                    return
+                }
+                
+                let selfPosts = snapshot!.data()![UserFields.likes.rawValue] as? [String]
                 let postCount = selfPosts?.count ?? 0
                 print("Currently thoughtwallet has \(postCount) posts")
                 completion(postCount,nil)
@@ -773,14 +799,21 @@ class FirebaseService {
     func getTotalPostCount(completion: @escaping (Int?,Error?)->Void){
         reference(to: .posts).getDocuments(completion: { snapshot,error in
             
-            if error != nil || snapshot == nil {
+            if error != nil {
                 print("Couldnt get total post count!")
                 completion(nil,error)
                 return
             }
             
+            if snapshot == nil || snapshot?.documents == nil {
+                // error handling
+                print("Zero posts altogether")
+                completion(0,nil)
+                return
+            }
+        
             let postCount = snapshot?.documents.count ?? 0
-//            print("Total posts on server \(postCount)")
+            print("Total posts on server \(postCount)")
             completion(postCount,nil)
         })
     }

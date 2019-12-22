@@ -61,6 +61,7 @@ class Post {
     var postOwnerProfilePic : UIImage?
     
     init(parameters : [String: Any]) {
+        postID = parameters[PostFields.postId.rawValue] as? String
         quote = parameters[PostFields.quote.rawValue] as? String ?? ""
         author = parameters[PostFields.author.rawValue] as? String ?? ""
         category = parameters[PostFields.category.rawValue] as? String ?? ""
