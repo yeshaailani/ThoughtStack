@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 import FirebaseAuth
 
-class SignUpViewController: UIViewController {
+class SignUpViewController: UIViewController,UITextFieldDelegate {
     
     var imagePicker: ImagePicker!
     
@@ -29,6 +29,10 @@ class SignUpViewController: UIViewController {
         self.imagePicker.present(from: sender)
     }
  
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
     
     func autoredirect(){
      
@@ -50,6 +54,19 @@ class SignUpViewController: UIViewController {
         self.autoredirect()
         self.imagePicker = ImagePicker(presentationController: self, delegate: self)
         self.autoFill()
+        
+        let fields = [
+        name,
+        username,
+        email,
+        password,
+        confirmPassword
+        ]
+        
+        for field in fields {
+            field?.delegate = self
+        }
+        
     }// end load
     
     func autoFill(){
@@ -58,7 +75,7 @@ class SignUpViewController: UIViewController {
         password.text = "123456"
         confirmPassword.text = "123456"
         email.text = "abhi@gmail.com"
-//        profilePicture.image = UIImage(named:"goku")! if picture is big the form malfunctions
+        profilePicture.image = UIImage(named:"goku")!
     }
     
     func validateFields() -> String? {
@@ -72,6 +89,8 @@ class SignUpViewController: UIViewController {
         password,
         confirmPassword
         ]
+        
+        
         
         for field in fields {
             if field?.text == "" {
@@ -184,9 +203,10 @@ class SignUpViewController: UIViewController {
     }
     
     func redirect(){
-           let nav = UINavigationController(rootViewController: TabBar())
-           nav.modalPresentationStyle = .overFullScreen
-            self.parent?.present(nav, animated: true, completion: nil)
+//           let nav = UINavigationController(rootViewController: TabBar())
+//           nav.modalPresentationStyle = .overFullScreen
+//            self.parent?.present(nav, animated: true, completion: nil)
+        self.present(UINavigationController(rootViewController: TabBar()), animated: true)
    }
     
     func signInUser(){

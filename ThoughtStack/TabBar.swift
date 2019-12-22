@@ -29,15 +29,14 @@ class TabBar: UITabBarController {
         if let creds = Utilities.singleton.load()
         {
         mockUserID = creds[UserFields.userId.rawValue]!
-        print("Userid: \(mockUserID)")
+        let email = creds[UserFields.email.rawValue]!
+        print("Userid: \(mockUserID) EmailId: \(email)")
         }
         else
         {
             self.dismiss(animated: true, completion: nil)
             return
         }
-        
-        
         
         
         let feed = Feed(userId: mockUserID) // in future take userId from persistent data or FIRAuth
@@ -48,10 +47,8 @@ class TabBar: UITabBarController {
         
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let controller = storyboard.instantiateViewController(withIdentifier: "CreatePostViewController") ?? UIViewController()
-        //just solved this one
-        //just done
-
+        let controller = storyboard.instantiateViewController(withIdentifier: "CreatePostViewController")
+    
         let createPost = controller
         createPost.tabBarItem = UITabBarItem(title: "Create Post", image: UIImage(named: "plus-outline"), selectedImage: UIImage(named: "plus-filled"))
         

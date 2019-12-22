@@ -9,7 +9,7 @@
 import UIKit
 import FirebaseAuth
 
-class LoginViewController: UIViewController {
+class LoginViewController: UIViewController,UITextFieldDelegate {
     @IBOutlet weak var email: UITextField!
     @IBOutlet weak var password: UITextField!
 
@@ -17,7 +17,21 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         self.autoredirect()
         self.autofill()
+        
+        let fields = [email,password]
+        
+        for field in fields {
+            field?.delegate = self
+        }
+        
     }
+    
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
     
     func autofill(){
         self.email.text = "abhi@gmail.com"
@@ -30,10 +44,8 @@ class LoginViewController: UIViewController {
         if let creds = Utilities.singleton.load() {
             
             if let email = creds[UserFields.email.rawValue], let userId = creds[UserFields.userId.rawValue] {
-                
-                self.redirect()
             
-                
+                self.redirect()
             }
             
         }
@@ -41,9 +53,7 @@ class LoginViewController: UIViewController {
     }
     
     func redirect(){
-        let nav = UINavigationController(rootViewController: TabBar())
-        nav.modalPresentationStyle = .overFullScreen
-        self.parent?.present(nav, animated: true, completion: nil)
+        self.present(UINavigationController(rootViewController: TabBar()), animated: true)
     }
     
     
@@ -76,16 +86,9 @@ class LoginViewController: UIViewController {
                         if error == nil && userId != nil {
                             print("Saving to persistent storage!")
                             Utilities.singleton.save(email: self.email.text!, userId: userId!)
+                            self.redirect()
                         }
-                        
-                        
                     })
-                    
-                    //Go to the HomeViewController if the login is sucessful
-//                    let vc = self.storyboard?.instantiateViewController(withIdentifier: "CreatePostViewController")
-//                    self.present(vc!, animated: true, completion: nil)
-                    
-                    self.present(UINavigationController(rootViewController: TabBar()), animated: true)
                     
                     print("logged in :)")
                     
@@ -104,22 +107,6 @@ class LoginViewController: UIViewController {
             }
         }
     }
-    
-    
-//    @IBAction func logOutAction(sender: AnyObject) {
-//        if FIRAuth.auth()?.currentUser != nil {
-//            do {
-//                try FIRAuth.auth()?.signOut()
-//                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SignUp")
-//                present(vc, animated: true, completion: nil)
-//
-//            } catch let error as NSError {
-//                print(error.localizedDescription)
-//            }
-//        }
-//    }
-
-
-
+  
 }// end class
 
