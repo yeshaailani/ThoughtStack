@@ -74,8 +74,6 @@ class Utilities {
         "Anon",
         "Anon",
         "Anon",
-        "Anon",
-        
         
         ]
         
@@ -88,7 +86,7 @@ class Utilities {
         .motivational,
         .famous,
         .famous,
-        .famous
+        .famous,
         ]
         
         
@@ -97,7 +95,7 @@ class Utilities {
             let params : [String: String] = [
                 "quote" : quoteText,
                 "author" : quoteAuthors[index],
-                "category" : quoteCategories[index].rawValue,
+                "category" : "famous",
                 "ownerId" : userID
             ]
             tempQuotes.append(params)
@@ -111,26 +109,25 @@ class Utilities {
                 "guilty-of-not-do",
                  "life-10-90",
                  "quality-act-habit",
-                 "slow-dont-matter-confucius",
+        "slow-dont-matter-confucius",
                  "today-fun",
                  "well-done-well-said",
-                 
-                 "chances-not-taken",
-                 "fake-friend",
-                 "heart-in-business",
+                 "alex-sword",
+                 "bose-idea",
+                 "bhagat-life",
+                 "books-chanakya",
+                 "life-measure",
+                 "old-enough",
+                 "love-being-married",
                  "sinking-ship",
                  "know-phone-number",
                  "tom-jerry",
-                 "life-measure",
-                 "love-being-married",
+                 "chances-not-taken",
+                 "fake-friend",
+                 "heart-in-business",
                  "love-better",
-                 "old-enough-to-know",
                  "rainbow-sky",
                  "success-work",
-                 "alex-sword",
-                 "books-chanakya",
-                 "bose-idea"
-                 
                  
            ]
     
