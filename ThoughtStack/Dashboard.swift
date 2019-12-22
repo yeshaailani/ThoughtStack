@@ -118,8 +118,7 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
         
         self.emptyPostInfo.addSubview(emptyPostText)
         emptyPostText.center(in: emptyPostInfo)
-        
-        
+    
     }
 
     
@@ -205,7 +204,7 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
 
     func setupNavigation() {
            
-        self.parent?.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named:"wallet-outline")!, style: .plain, target: self, action: #selector(walletTapped))
+        self.parent?.navigationItem.leftBarButtonItem = nil
            
            self.parent?.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named:"logout")!, style: .plain, target: self, action: #selector(logoutTapped))
            

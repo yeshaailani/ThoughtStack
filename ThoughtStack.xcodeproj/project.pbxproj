@@ -18,7 +18,6 @@
 		9A1814FA23AF0E8F005330F0 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1814F523AF0E8C005330F0 /* ImagePicker.swift */; };
 		9A1814FB23AF0E8F005330F0 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1814F623AF0E8F005330F0 /* SignUpViewController.swift */; };
 		9A1814FD23AF0EA7005330F0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A1814FC23AF0EA7005330F0 /* Main.storyboard */; };
-		9A1814FF23AF36EE005330F0 /* CreatePost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1814FE23AF36EE005330F0 /* CreatePost.swift */; };
 		9A90A9B8239B1E790004EF08 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A90A9B7239B1E790004EF08 /* TabBar.swift */; };
 		9AAB5050239AC38400BA5453 /* Dashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAB504F239AC38400BA5453 /* Dashboard.swift */; };
 		9AAB5052239AC3D200BA5453 /* ThoughtWallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAB5051239AC3D200BA5453 /* ThoughtWallet.swift */; };
@@ -61,7 +60,6 @@
 		9A1814F523AF0E8C005330F0 /* ImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		9A1814F623AF0E8F005330F0 /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		9A1814FC23AF0EA7005330F0 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		9A1814FE23AF36EE005330F0 /* CreatePost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePost.swift; sourceTree = "<group>"; };
 		9A90A9B7239B1E790004EF08 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		9AAB504F239AC38400BA5453 /* Dashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard.swift; sourceTree = "<group>"; };
 		9AAB5051239AC3D200BA5453 /* ThoughtWallet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThoughtWallet.swift; sourceTree = "<group>"; };
@@ -128,7 +126,6 @@
 				164C7A3F239A56E20051088E /* Assets.xcassets */,
 				164C7A41239A56E20051088E /* LaunchScreen.storyboard */,
 				164C7A44239A56E20051088E /* Info.plist */,
-				9A1814FE23AF36EE005330F0 /* CreatePost.swift */,
 				9A90A9B7239B1E790004EF08 /* TabBar.swift */,
 				9AD3447723AAD01200A2599E /* Card.swift */,
 				9AAB504F239AC38400BA5453 /* Dashboard.swift */,
@@ -342,7 +339,6 @@
 				9AAB5050239AC38400BA5453 /* Dashboard.swift in Sources */,
 				9A1814F923AF0E8F005330F0 /* CreatePostViewController.swift in Sources */,
 				9A1814F823AF0E8F005330F0 /* ImageConversion.swift in Sources */,
-				9A1814FF23AF36EE005330F0 /* CreatePost.swift in Sources */,
 				9A1814FA23AF0E8F005330F0 /* ImagePicker.swift in Sources */,
 				9AAB5054239AC40000BA5453 /* Feed.swift in Sources */,
 				9AFB0EF5239C39BA00172494 /* FirebaseService.swift in Sources */,

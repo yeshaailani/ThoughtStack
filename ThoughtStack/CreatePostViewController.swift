@@ -114,6 +114,7 @@ class CreatePostViewController: UIViewController,UITextFieldDelegate {
         super.viewDidAppear(animated)
         self.parent?.navigationItem.title = "Create Post"
         self.parent?.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named:"logout")!, style: .plain, target: self, action: #selector(logout))
+        self.parent?.navigationItem.rightBarButtonItem = nil
                   
     }
     
@@ -132,8 +133,6 @@ class CreatePostViewController: UIViewController,UITextFieldDelegate {
         
         
     }
-    
-    
     
     func showAlertBox(message:String)
     {

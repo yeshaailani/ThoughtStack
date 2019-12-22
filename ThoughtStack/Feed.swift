@@ -85,7 +85,6 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     }
     
     
-    
     func checkPostCount() {
         
         print("Checking for new posts?")
@@ -140,7 +139,7 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
         self.emptyPostInfo.centerInSuperview()
         self.emptyPostInfo.size(.init(width: 200, height: 200))
         
-        let emptyPostText = UILabel(text: "There are no more posts to show", font: .boldSystemFont(ofSize: 16), textColor: .black, textAlignment: .center, numberOfLines: 1)
+        let emptyPostText = UILabel(text: "There are no more posts to show", font: .boldSystemFont(ofSize: 16), textColor: .white, textAlignment: .center, numberOfLines: 1)
         
         self.emptyPostInfo.addSubview(emptyPostText)
         emptyPostText.center(in: emptyPostInfo)
