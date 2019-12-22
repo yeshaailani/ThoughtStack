@@ -7,6 +7,7 @@
 //
 import UIKit
 import LBTATools
+import FirebaseAuth
 
 
 class PostCell : LBTAListCell<Post> {
@@ -221,6 +222,18 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
     
     @objc func logoutTapped() {
         print("Logout has been tapped!")
+        do{
+            print("Logging out!")
+            try Auth.auth().signOut()
+            Utilities.singleton.clearCache() // remove from persistent storage
+            self.parent?.dismiss(animated: true, completion: nil)
+            
+        }catch let error as NSError {
+            print("Logout Error",error.localizedRecoverySuggestion)
+        }
+        
+        
+        
         // auth logic here
     }
             
