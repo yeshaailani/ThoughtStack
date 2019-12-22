@@ -103,7 +103,7 @@ class Card: UIView {
         var totalViews = [containerView,cardContainer,profileContainer,quoteText,author]
         
         if let image = quoteImage {
-            self.quoteOptionalImageView = UIImageView(image:image,contentMode: .scaleAspectFill)
+            self.quoteOptionalImageView = UIImageView(image:image,contentMode: .scaleAspectFit)
             totalViews.append(quoteOptionalImageView!)
         }
     
