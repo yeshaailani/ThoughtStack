@@ -30,7 +30,7 @@ class TabBar: UITabBarController {
         let dashboard = Dashboard(userId: mockUserID) // TODO: take from persistent data later
         dashboard.tabBarItem = UITabBarItem(title: "Dashboard", image: UIImage(named: "user-outline")!, selectedImage: UIImage(named: "user-filled")!)
         
-        let createPost = CreatePost()
+        let createPost = self.storyboard?.instantiateViewController(withIdentifier: "CreatePostViewController") ?? UIViewController()
         createPost.tabBarItem = UITabBarItem(title: "Create Post", image: UIImage(named: "plus-outline"), selectedImage: UIImage(named: "plus-filled"))
         
         
@@ -38,20 +38,7 @@ class TabBar: UITabBarController {
         wallet.tabBarItem = UITabBarItem(title: "ThoughtWallet", image: UIImage(named: "wallet-outline"), selectedImage: UIImage(named: "wallet-filled"))
         
         
-        let cardDemo = UIViewController()
-        
-        let mockQuotes = Utilities.singleton.getMockQuotes()
-        
-        let card = Card(frame: .init(x: 0, y: 0, width: cardDemo.view.frame.width, height: cardDemo.view.frame.height), post: mockQuotes[0])
-        
-        cardDemo.view = card
-        
-        
-        cardDemo.tabBarItem = UITabBarItem(title: "CardDemo", image: UIImage(named: "wallet-outline"), selectedImage: UIImage(named: "wallet-filled"))
-        
-        
-        viewControllers = [feed,dashboard,wallet]
-        
+        viewControllers = [createPost,feed,dashboard]
         
         
     }

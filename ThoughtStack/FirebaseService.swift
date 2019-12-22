@@ -30,6 +30,8 @@ import UIKit
  make 4 seperate users each with their own set of quotes with and without images (Utilities)
  
  
+ // dashboard incomplete fields
+ 
  
  test feed heavily....
  fix the issues with card swipes and overlays
@@ -81,7 +83,13 @@ class FirebaseService {
             
                 print("Attached profile pic to user!")
                 user[UserFields.profilePicImageURL.rawValue] = downloadURL
-                self.reference(to: .users).addDocument(data: user)
+                
+                let userId = self.reference(to: .users).document().documentID
+                
+                self.reference(to: .users).document(userId).setData(user)
+            
+                Utilities.singleton.save(email: user[UserFields.email.rawValue] as! String, userId: userId) // save to persistent storage!
+                
             })
         }
         else
@@ -95,7 +103,7 @@ class FirebaseService {
 
     }
     
-    func addPost(userId: String,post: [String : Any],optionalImage : UIImage? = nil){
+    func addPost(userId: String,post: [String : Any],optionalImage : UIImage? = nil, completion: @escaping () -> Void){
         
         var data = post
         
@@ -124,6 +132,7 @@ class FirebaseService {
                     ])
                 
                     print("Added post with an image! \(String(describing: downloadURL))")
+                    completion()
                 }
                 
             })
@@ -136,6 +145,10 @@ class FirebaseService {
             self.reference(to: .users).document(userId).updateData([
                 UserFields.selfPosts.rawValue : FieldValue.arrayUnion([newPostId])
             ])
+            
+            completion()
+            
+            
         }
         
     }
@@ -531,7 +544,7 @@ class FirebaseService {
                         
                         self.downloadImage(downloadURL: user?.profilePicImageURL ?? FirebaseService.placeHolderUserProfilePic, completion: {profilePic,error in
                         
-                            let commonProfilePic = profilePic!
+                            let commonProfilePic = profilePic ?? UIImage(named:"user-filled")!
                             let commonUserName = user?.nickName
                             
                             for post in posts! {
@@ -769,6 +782,61 @@ class FirebaseService {
             completion(postCount,nil)
         })
     }
+    
+    
+    func getUserIDFromEmail(email:String,completion : @escaping (String?,Error?) -> Void){
+        reference(to: .users).whereField(UserFields.email.rawValue, isEqualTo:email).getDocuments(completion:
+            { (snapshot,error) in
+                
+                if error != nil {
+                    print("Error retrieving user!",error?.localizedDescription)
+                    completion(nil,error)
+                    return
+                }
+                for document in snapshot!.documents {
+                    
+                    let userId = document.documentID
+                    print("Found user for \(email)!")
+                    completion(userId,nil)
+                    return
+                    
+                }
+                
+                print("No user found for \(email)") // use these to check for uniqueness
+                completion(nil,nil)
+                               
+            
+        })
+        }
+    
+    func checkNickNameUniqueNess(nickName:String,completion: @escaping (Bool?,Error?) -> Void){
+        
+        reference(to: .users).whereField(UserFields.nickName.rawValue, isEqualTo: nickName).getDocuments(completion: { snapshot,error in
+            
+            if error != nil {
+                print("error getting nickname",error?.localizedDescription)
+                completion(nil,error)
+                return
+            }
+            
+            
+            let userCount = snapshot?.documents.count ?? 0
+            
+            if userCount == 0 {
+             print("Nickname is unique")
+             completion(true,nil)
+             return
+            }
+             print("Not a unique nickname")
+            completion(false,nil)
+            return
+                    
+        });
+        
+        
+    }
+    
+    
     
     
     /*
