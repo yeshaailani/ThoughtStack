@@ -11,6 +11,7 @@
 		164C7A40239A56E20051088E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 164C7A3F239A56E20051088E /* Assets.xcassets */; };
 		164C7A43239A56E20051088E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 164C7A41239A56E20051088E /* LaunchScreen.storyboard */; };
 		164C7A4E239A56E20051088E /* ThoughtStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164C7A4D239A56E20051088E /* ThoughtStackTests.swift */; };
+		16DD158A23AF621F002F4903 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 16DD158923AF621F002F4903 /* GoogleService-Info.plist */; };
 		9A1814F723AF0E8F005330F0 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1814F223AF0E84005330F0 /* LoginViewController.swift */; };
 		9A1814F823AF0E8F005330F0 /* ImageConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1814F323AF0E87005330F0 /* ImageConversion.swift */; };
 		9A1814F923AF0E8F005330F0 /* CreatePostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1814F423AF0E89005330F0 /* CreatePostViewController.swift */; };
@@ -18,7 +19,6 @@
 		9A1814FB23AF0E8F005330F0 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1814F623AF0E8F005330F0 /* SignUpViewController.swift */; };
 		9A1814FD23AF0EA7005330F0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A1814FC23AF0EA7005330F0 /* Main.storyboard */; };
 		9A1814FF23AF36EE005330F0 /* CreatePost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1814FE23AF36EE005330F0 /* CreatePost.swift */; };
-		9A18150123AF4448005330F0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9A18150023AF4448005330F0 /* GoogleService-Info.plist */; };
 		9A90A9B8239B1E790004EF08 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A90A9B7239B1E790004EF08 /* TabBar.swift */; };
 		9AAB5050239AC38400BA5453 /* Dashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAB504F239AC38400BA5453 /* Dashboard.swift */; };
 		9AAB5052239AC3D200BA5453 /* ThoughtWallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAB5051239AC3D200BA5453 /* ThoughtWallet.swift */; };
@@ -51,6 +51,7 @@
 		164C7A49239A56E20051088E /* ThoughtStackTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ThoughtStackTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		164C7A4D239A56E20051088E /* ThoughtStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThoughtStackTests.swift; sourceTree = "<group>"; };
 		164C7A4F239A56E20051088E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		16DD158923AF621F002F4903 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2F835F4BA364CDC71FE24FB9 /* Pods-ThoughtStackTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThoughtStackTests.debug.xcconfig"; path = "Target Support Files/Pods-ThoughtStackTests/Pods-ThoughtStackTests.debug.xcconfig"; sourceTree = "<group>"; };
 		52FFDA9AAA758328D40ADDAC /* Pods-ThoughtStack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThoughtStack.debug.xcconfig"; path = "Target Support Files/Pods-ThoughtStack/Pods-ThoughtStack.debug.xcconfig"; sourceTree = "<group>"; };
 		8C93A429CFAB74EF1C33A28B /* Pods-ThoughtStack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThoughtStack.release.xcconfig"; path = "Target Support Files/Pods-ThoughtStack/Pods-ThoughtStack.release.xcconfig"; sourceTree = "<group>"; };
@@ -61,7 +62,6 @@
 		9A1814F623AF0E8F005330F0 /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		9A1814FC23AF0EA7005330F0 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		9A1814FE23AF36EE005330F0 /* CreatePost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePost.swift; sourceTree = "<group>"; };
-		9A18150023AF4448005330F0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9A90A9B7239B1E790004EF08 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		9AAB504F239AC38400BA5453 /* Dashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard.swift; sourceTree = "<group>"; };
 		9AAB5051239AC3D200BA5453 /* ThoughtWallet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThoughtWallet.swift; sourceTree = "<group>"; };
@@ -117,7 +117,7 @@
 		164C7A37239A56E10051088E /* ThoughtStack */ = {
 			isa = PBXGroup;
 			children = (
-				9A18150023AF4448005330F0 /* GoogleService-Info.plist */,
+				16DD158923AF621F002F4903 /* GoogleService-Info.plist */,
 				9A1814FC23AF0EA7005330F0 /* Main.storyboard */,
 				9A1814F423AF0E89005330F0 /* CreatePostViewController.swift */,
 				9A1814F323AF0E87005330F0 /* ImageConversion.swift */,
@@ -255,8 +255,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				164C7A43239A56E20051088E /* LaunchScreen.storyboard in Resources */,
+				16DD158A23AF621F002F4903 /* GoogleService-Info.plist in Resources */,
 				164C7A40239A56E20051088E /* Assets.xcassets in Resources */,
-				9A18150123AF4448005330F0 /* GoogleService-Info.plist in Resources */,
 				9A1814FD23AF0EA7005330F0 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

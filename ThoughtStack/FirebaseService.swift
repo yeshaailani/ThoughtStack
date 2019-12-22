@@ -39,7 +39,9 @@ class FirebaseService {
     
     private init(){}
     static let shared =  FirebaseService()
-    static let placeHolderUserProfilePic = "https://firebasestorage.googleapis.com/v0/b/thoughtstackswift-a8167.appspot.com/o/profile-pics%2Fplaceholder.jpg?alt=media&token=40e85e25-48a7-4849-b680-4a972a8940c7"
+    static let placeHolderUserProfilePic = "https://firebasestorage.googleapis.com/v0/b/thoughtstack-91089.appspot.com/o/profile-pics%2Ficon.png?alt=media&token=4dace66b-0e97-430e-94e4-8de24b2b1d48" //changed path of placeholder, was giving error
+    
+    
     
     static let maxImageUploadSize : Int64 = 2 * 1024 * 1024 // 2 MB
     
