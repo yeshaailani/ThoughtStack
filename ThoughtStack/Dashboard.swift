@@ -15,24 +15,20 @@ class PostCell : LBTAListCell<Post> {
     var userProfilePic = UIImageView(image: UIImage(named:"user-filled"), contentMode: .scaleAspectFill)
     
     let userName : UILabel = {let label = UILabel(text: "ownerName", font: .boldSystemFont(ofSize: 16), textColor: .black, textAlignment: .left, numberOfLines: 1)
-//        label.backgroundColor = .systemPink
         return label
     }() // owner can be nickname/hashtag
     
     let quoteText : UILabel = {
         let label = UILabel(text:"postText", font: .systemFont(ofSize: 14),textColor: .black,textAlignment: .left,numberOfLines: 3)
-//        label.backgroundColor = .blue
         return label
     }()
 
     let quoteAuthor : UILabel = {let label = UILabel(text:"quoteAuthor", font: .systemFont(ofSize: 13),textColor: .black,textAlignment: .right,numberOfLines: 1)
-//        label.backgroundColor = .yellow
         return label
     }()
 
     let quoteImage : UIImageView = {
         let imageView = UIImageView(image: UIImage(),contentMode: .scaleAspectFit)
-//        imageView.backgroundColor = .purple
         imageView.isHighlighted = true
         return imageView
     }()
@@ -40,7 +36,6 @@ class PostCell : LBTAListCell<Post> {
     let likeButton = UIButton(image: UIImage(named:"ic_like")!, tintColor: .lightGray, target: nil, action: nil)
     
     let numLikes : UILabel = {let label = UILabel(text:"x ratings", font: .systemFont(ofSize: 18),textColor: .lightGray,textAlignment: .left)
-//        label.backgroundColor = .magenta
         return label
     }()
     
@@ -102,7 +97,7 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
     let spinner = SpinnerViewController()
     let normalPostSize : CGFloat = 250
     let imagePostSize : CGFloat = 450
-    
+    lazy var emptyPostInfo = UIView()
     
     var userName : String?
     var userProfilePic : UIImage?
@@ -111,6 +106,22 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
         super.viewDidLoad()
         self.checkPostCount()
     }
+    
+    func noMorePostsLeft(){
+        
+        self.view.addSubview(emptyPostInfo)
+        
+        self.emptyPostInfo.centerInSuperview()
+        self.emptyPostInfo.size(.init(width: 200, height: 200))
+        
+        let emptyPostText = UILabel(text: "No posts to display", font: .boldSystemFont(ofSize: 16), textColor: .black, textAlignment: .center, numberOfLines: 1)
+        
+        self.emptyPostInfo.addSubview(emptyPostText)
+        emptyPostText.center(in: emptyPostInfo)
+        
+        
+    }
+
     
     func tearDownSpinner(){
         spinner.willMove(toParent: nil)
@@ -123,7 +134,6 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
         view.addSubview(spinner.view)
         spinner.didMove(toParent: self)
     }
-    //    let textPostSize : CGFloat = 300
         
         
     init(userId : String){
@@ -143,7 +153,6 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
         
         FirebaseService.shared.getDashboardPostCount(userId: userId, completion: { postCount,error in
             
-
              let newPostCount = postCount ?? 0
              print("Old posts count \(self.lastpostCount) New posts count: \(newPostCount)")
             
@@ -153,16 +162,19 @@ class Dashboard: LBTAListController<PostCell,Post>, UICollectionViewDelegateFlow
                 
                 FirebaseService.shared.getUsersDashboard(userId: self.userId, completion: { posts,error in
                     
-                    if error != nil || posts == nil {
-                        print("Couldnt get dashboard")
+                    if error != nil || posts == nil || posts!.count == 0 {
+                        print("Couldnt get dashboard",error?.localizedDescription ?? "")
+                        self.tearDownSpinner()
+                        self.noMorePostsLeft()
                         return
                     }
+                    
+                    
                     print("Got \(posts!.count) quotes")
                     self.items = posts!
-//                    self.collectionView.reloadData()
                     self.lastpostCount = newPostCount
                     self.tearDownSpinner()
-                    
+
                     })
              }
             

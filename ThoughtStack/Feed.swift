@@ -6,13 +6,16 @@ import pop
 import TinyConstraints
 
 
+/*
+ crashed @ feed
+ */
+
 class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
     
     var userId : String
     var spinner = SpinnerViewController()
     var lastPostCount = 0
-    
     var kolodaView : KolodaView
     
     lazy var likeButton : UIButton = {
@@ -36,6 +39,8 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     }()
     
     lazy var panel = UIStackView()
+    
+    lazy var emptyPostInfo = UIView()
     
     fileprivate var dataSource = [Post]()
         
@@ -98,15 +103,27 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
                 
                 FirebaseService.shared.getUserFeed(userId: self.userId, completion: {posts,error in
                     
-                    if error != nil || posts == nil {
-                        print("Didnt get feed!")
+                    if error != nil {
+                        print("Didnt get feed!",error?.localizedDescription)
+                        
                         return
                     }
                         
+                    
+                    if posts == nil || posts?.count ?? 0 == 0 {
+                        // no posts left
+                        
+                        self.noMorePostsLeft()
+                        self.tearDownSpinner()
+                        return
+                    }
+                    
                     self.dataSource = posts!
                     print("Loaded datasource with \(self.dataSource.count ) cards")
                     self.kolodaView.reloadData()
                     self.tearDownSpinner()
+                    self.panel.isHidden = false
+                    
                     print("All data sent!")
                 })
             }
@@ -114,11 +131,29 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
     }
     
+    func noMorePostsLeft(){
+        kolodaView.isHidden = true
+        self.panel.isHidden = true
+        
+        self.view.addSubview(emptyPostInfo)
+        
+        self.emptyPostInfo.centerInSuperview()
+        self.emptyPostInfo.size(.init(width: 200, height: 200))
+        
+        let emptyPostText = UILabel(text: "There are no more posts to show", font: .boldSystemFont(ofSize: 16), textColor: .black, textAlignment: .center, numberOfLines: 1)
+        
+        self.emptyPostInfo.addSubview(emptyPostText)
+        emptyPostText.center(in: emptyPostInfo)
+        
+        
+    }
+    
     func addViews(){
         
         panel = UIStackView(arrangedSubviews: [likeButton,skipButton])
         panel.axis = .horizontal
         panel.alignment = .fill
+        panel.isHidden = true
         
         let totalViews = [containerView,kolodaView,panel]
         
@@ -242,7 +277,7 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
     func kolodaDidRunOutOfCards(_ koloda: KolodaView) {
         // ran out of cards logic
-        koloda.resetCurrentCardIndex()
+        self.noMorePostsLeft()
     }
     
     func koloda(_ koloda: KolodaView, didSelectCardAt index: Int) {
