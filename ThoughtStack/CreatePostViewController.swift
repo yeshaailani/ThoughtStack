@@ -10,6 +10,9 @@ import UIKit
 import FirebaseFirestore
 import FirebaseAuth
 
+// logout didnt work
+
+
 class CreatePostViewController: UIViewController,UITextFieldDelegate {
     
     var imagePicker: ImagePicker!

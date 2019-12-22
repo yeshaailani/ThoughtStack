@@ -104,7 +104,6 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
                     
                     if error != nil {
                         print("Didnt get feed!",error?.localizedDescription)
-                        
                         return
                     }
                         

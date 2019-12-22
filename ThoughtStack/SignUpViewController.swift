@@ -13,6 +13,7 @@ import FirebaseAuth
 class SignUpViewController: UIViewController,UITextFieldDelegate {
     
     var imagePicker: ImagePicker!
+    var spinner = SpinnerViewController()
     
     @IBOutlet weak var name: UITextField!
     @IBOutlet weak var username: UITextField!
@@ -187,10 +188,14 @@ class SignUpViewController: UIViewController,UITextFieldDelegate {
                     UserFields.likes.rawValue: [String]()
                     ]
                 
-                FirebaseService.shared.addUser(params: currentUser,optionalProfilePic: self.profilePicture.image)
+                FirebaseService.shared.addUser(params: currentUser,optionalProfilePic: self.profilePicture.image,completion : {
+                    self.setUpSpinner()
+                    print("You have successfully signed up. Signing in current user...")
+                    self.signInUser()
+                    
+                })
                 
-                print("You have successfully signed up. Signing in current user...")
-                self.signInUser()
+                
                 
             } else {
 
@@ -200,6 +205,18 @@ class SignUpViewController: UIViewController,UITextFieldDelegate {
             }
 
         }
+    }
+    func tearDownSpinner(){
+        spinner.willMove(toParent: nil)
+        spinner.view.removeFromSuperview()
+        spinner.removeFromParent()
+    }
+    
+    func setUpSpinner(){
+        addChild(spinner)
+        spinner.view.frame = view.frame
+        view.addSubview(spinner.view)
+        spinner.didMove(toParent: self)
     }
     
     func redirect(){
@@ -235,6 +252,8 @@ class SignUpViewController: UIViewController,UITextFieldDelegate {
                 print("Auth error",error?.localizedDescription)
                 self.alertUser(message: "Couldnt login! Reason: Auth error")
             }
+            
+            self.tearDownSpinner()
         }
         
         

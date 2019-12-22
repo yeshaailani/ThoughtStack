@@ -44,7 +44,8 @@ class Utilities {
             "To be successful you have to put your heart in your business and your business in your heart",
             "Love makes everything better.",
             "Look upto the sky, you'll never find rainbows looking at your feet",
-            "The only place success comes before work is in the dictionary"
+            "The only place success comes before work is in the dictionary",
+            "If someone doesn't appreciate your presence, make them appreciate your absence"
             
             
         ]
@@ -74,7 +75,10 @@ class Utilities {
         "Anon",
         "Anon",
         "Anon",
-        
+        "Anon",
+        "Anon",
+        "Anon",
+        "Anon",
         ]
         
         
@@ -128,19 +132,54 @@ class Utilities {
                  "love-better",
                  "rainbow-sky",
                  "success-work",
+                 "presencev"
                  
            ]
     
-    func testFIR(){
+    
+    
+    
+    func testFIR(userId:String, startIndex : Int, endIndex : Int){
        
         print("Going to test \(quotes.count) quotes")
-        for (index,quote) in quotes.enumerated() {
-            FirebaseService.shared.addPost(userId : "oG7weadM3FHXhb9XyJBC",post: quote,optionalImage: UIImage(named: quoteImages[index]),completion: {
+        
+        
+        var begin = startIndex , end = endIndex
+        
+        while(begin < end){
             
-                print("Post added succesfully!")
+           FirebaseService.shared.addPost(userId : userId,post: quotes[begin],optionalImage: UIImage(named: quoteImages[begin]),completion: {
+               print("Post number \(begin) added succesfully!")
+           })
             
-            })
+            begin += 1
+//            print("Will add image \(self.quoteImages[index].count)")
         }
+        
+        return
+    
+//        for (index,quote) in quotes.enumerated() {
+//            FirebaseService.shared.addPost(userId : userId,post: quote,optionalImage: UIImage(named: quoteImages[index]),completion: {
+//                print("Post added succesfully!")
+//            })
+//        }
+        
+    }
+    
+    
+    func uploadPosts(){
+        
+        let user1 = "AG1ktoBHbl8whJ2vPVKP" , user2 = "GmL2CizP2GDPy6b8IQnN", user3 = "Jm1zuPS8m4sLZcYlKwez", user4 = "TbUemkIZtrIklb3QNAkJ"
+        
+        self.testFIR(userId: user1, startIndex: 0, endIndex: 6) // 0 to 5
+        
+        self.testFIR(userId: user2, startIndex: 6, endIndex: 12) // 6 to 12
+        
+        self.testFIR(userId: user3, startIndex: 12, endIndex: 18) // 0 to 6
+        
+        self.testFIR(userId: user4, startIndex: 18, endIndex: 24) // 0 to 6
+        
+        
         
     }
     
@@ -165,13 +204,10 @@ class Utilities {
             currPost.image = UIImage(named: quoteImages[index])
             currPost.postOwnerUserName = mockUserName
             currPost.postOwnerProfilePic = mockProfilePic
-//            currPost.numLikes = Int(arc4random_uniform(UInt32(20)))
             currPost.numLikes = [String]()
             posts.append(currPost)
         }
         
-        posts[0].postID = "HKNpoo196Jwt79JZNVW6"
-        posts[2].postID = "NBlcwSG2zbfnshkQeEkI"
         
         return posts
         

@@ -59,7 +59,7 @@ class FirebaseService {
         return val
     }
     
-    func addUser(params : [String : Any],optionalProfilePic: UIImage? = nil) {
+    func addUser(params : [String : Any],optionalProfilePic: UIImage? = nil,completion: @escaping () -> ()) {
     
         /*
         let params : [String : Any] = [
@@ -319,7 +319,7 @@ class FirebaseService {
                     
                     if let data = post!.data() {
                         var currentPost = Post(parameters: data)
-//                        currentPost.postID = postId // this line is critical dont touch
+                        currentPost.postID = postId // this line is critical dont touch
                         
                         if currentPost.imageURL != nil {
                             
@@ -585,9 +585,7 @@ class FirebaseService {
     func getUserFeed(userId : String, completion: @escaping ([Post]?,Error?)-> Void){
         /*
          
-         Issues: Adding new content requires the feed to be aware of its own content with respect to backend. Needs some kind of snapshot listener i suppose.
-         
-         stuck in infinite loop :/
+         Issues:  :/
          
         TESTING REQUIRED!
          
