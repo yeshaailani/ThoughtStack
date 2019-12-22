@@ -12,10 +12,7 @@ import TinyConstraints
 
 /* Issues:
  
- Too small on feed
- Too large for demo
- 
- quote nowhere to be seen and multiple breakable constraints
+ Breaking constraints on author. Can be fixed by adding additional view.
  
  */
 
@@ -124,10 +121,12 @@ class Card: UIView {
         let cardWidth = width - 2 * widthOffset, cardHeight = 0.8 * height
         var arrangedSubviews = [UIView]()
         
-        containerView.edgesToSuperview()
-        containerView.size(self.frame.size)
+//        containerView.edgesToSuperview()
+//        containerView.size(self.frame.size)
         
-        cardContainer.edges(to: containerView, insets: .init(top: heightOffset, left: widthOffset, bottom: 2.5 * heightOffset ,right: widthOffset))
+//        cardContainer.edges(to: containerView, insets: .init(top: heightOffset, left: widthOffset, bottom: 2.5 * heightOffset ,right: widthOffset))
+        
+        cardContainer.edgesToSuperview()
         
         cardContainer.layer.cornerRadius = cardHeight / 24
         cardContainer.clipsToBounds = true

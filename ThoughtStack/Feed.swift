@@ -31,7 +31,7 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
     lazy var containerView : UIView = {
         let view = UIView();
-        view.backgroundColor = .lightGray;
+        view.backgroundColor = .red;
         return view;
     }()
     
@@ -83,7 +83,7 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
     func checkPostCount() {
         
-
+        print("Checking for new posts?")
         FirebaseService.shared.getTotalPostCount(completion: { totalPostCount,error in
             
             if error != nil || totalPostCount == nil{
@@ -111,7 +111,7 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
                 })
             }
         })
-        
+    
     }
     
     func addViews(){
@@ -130,10 +130,12 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     func constrainViews(){
         let frameWidth = view.frame.width, frameHeight = view.frame.height
         
+        
+        containerView.edgesToSuperview()
         kolodaView.centerX(to: containerView)
-        kolodaView.width(0.6 * frameWidth)
-        kolodaView.height(0.6 * frameHeight)
-        kolodaView.top(to: containerView,offset: 20)
+        kolodaView.height(0.7 * frameHeight)
+        kolodaView.width(0.9 * frameWidth)
+        kolodaView.top(to: containerView,offset: 72)
         
         panel.centerX(to: containerView)
         panel.topToBottom(of: kolodaView,offset: 12)
@@ -142,8 +144,6 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
         panel.padLeft(8)
         panel.padRight(8)
         
-
-        containerView.edgesToSuperview()
         
     }
     
@@ -213,7 +213,7 @@ class Feed : UIViewController, KolodaViewDataSource, KolodaViewDelegate {
     
     func koloda(_ koloda: KolodaView, viewForCardOverlayAt index: Int) -> OverlayView? {
         // setup a uiview to show an image for left and right swipes
-        return ExampleOverlayView(frame: .init(x: 0, y: 0, width: view.frame.width, height: 300))
+        return ExampleOverlayView(frame: kolodaView.frame)
     }
     
     func koloda(_ koloda: KolodaView, didSwipeCardAt index: Int, in direction: SwipeResultDirection) {
@@ -264,7 +264,7 @@ class ExampleOverlayView: OverlayView {
         
         var imageView = UIImageView(frame: self.bounds) // since this was supposed to be an outlet you must add one somehow and link it here.
     
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         self.addSubview(imageView)
         
         return imageView

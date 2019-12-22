@@ -50,7 +50,7 @@ class TabBar: UITabBarController {
         cardDemo.tabBarItem = UITabBarItem(title: "CardDemo", image: UIImage(named: "wallet-outline"), selectedImage: UIImage(named: "wallet-filled"))
         
         
-        viewControllers = [cardDemo,feed,dashboard,wallet]
+        viewControllers = [feed,dashboard,wallet]
         
         
         
