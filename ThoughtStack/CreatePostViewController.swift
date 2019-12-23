@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseFirestore
+
 import FirebaseAuth
 
 class CreatePostViewController: UIViewController,UITextFieldDelegate {
@@ -15,11 +16,13 @@ class CreatePostViewController: UIViewController,UITextFieldDelegate {
     var imagePicker: ImagePicker!
     var email:String!
     var spinner = SpinnerViewController()
+
     
     @IBOutlet weak var ImageView: UIImageView!
     @IBOutlet weak var category: UITextField!
     @IBOutlet weak var author: UITextField!
     @IBOutlet weak var quote: UITextField!
+
     
     var database = Firestore.firestore()
     
@@ -69,10 +72,12 @@ class CreatePostViewController: UIViewController,UITextFieldDelegate {
         
         if self.author.text == "" || self.category.text == "" || self.quote.text == "" {
             self.alertUser(message: "Please enter all the fields!")
+
         }
         else
         {
             
+
             let creds = Utilities.singleton.load()
             
             if let email = creds?[UserFields.email.rawValue], let userId = creds?[UserFields.userId.rawValue]
@@ -97,10 +102,12 @@ class CreatePostViewController: UIViewController,UITextFieldDelegate {
             }
         }
     }
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.imagePicker = ImagePicker(presentationController: self, delegate: self)
+
         let textFields = [quote,category,author]
         
         for textField in textFields {
@@ -129,16 +136,20 @@ class CreatePostViewController: UIViewController,UITextFieldDelegate {
         }
         
         
+
     }
     
     func showAlertBox(message:String)
     {
+
         let alertController = UIAlertController(title: "Success!", message:message , preferredStyle: .alert)
+
         
         let defaultAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alertController.addAction(defaultAction)
         
         self.present(alertController, animated: true, completion: nil)
+
         
     }
     
@@ -146,6 +157,7 @@ class CreatePostViewController: UIViewController,UITextFieldDelegate {
 
 extension CreatePostViewController: ImagePickerDelegate {
     
+
     func didSelect(image: UIImage?) {
         self.ImageView.image = image
     }

@@ -9,6 +9,7 @@
 import UIKit
 import FirebaseAuth
 
+
 class LoginViewController: UIViewController,UITextFieldDelegate {
     @IBOutlet weak var email: UITextField!
     @IBOutlet weak var password: UITextField!
@@ -58,6 +59,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate {
     
     
     @IBAction func login(_ sender: Any) {
+
         
         if self.email.text == "" || self.password.text == "" {
             
@@ -72,12 +74,15 @@ class LoginViewController: UIViewController,UITextFieldDelegate {
             
         } else {
             
-            Auth.auth().signIn(withEmail: self.email.text!, password: self.password.text!) { user,error in
+
+         Auth.auth().signIn(withEmail: self.email.text!, password: self.password.text!) { user,error in
+
                 
                 if error == nil {
                     
                     //Print into the console if successfully logged in
                     print("You have successfully logged in")
+
                     FirebaseService.shared.getUserIDFromEmail(email: self.email.text!, completion: { userId, error in
                         
                         if error == nil && userId != nil {
@@ -87,14 +92,17 @@ class LoginViewController: UIViewController,UITextFieldDelegate {
                         }
                     })
                     
+
                     print("logged in :)")
                     
                 } else {
                     
                     //Tells the user that there is an error and then gets firebase to tell them the error
+
                     let alertController = UIAlertController(title: "Error", message: "Auth error:Couldnt login", preferredStyle: .alert)
                     
                     print("Auth error",error?.localizedDescription)
+
                     
                     let defaultAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
                     alertController.addAction(defaultAction)
@@ -105,5 +113,7 @@ class LoginViewController: UIViewController,UITextFieldDelegate {
         }
     }
     
+
+
 }// end class
 

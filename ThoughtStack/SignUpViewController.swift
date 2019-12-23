@@ -10,26 +10,31 @@ import UIKit
 import Firebase
 import FirebaseAuth
 
+
 class SignUpViewController: UIViewController,UITextFieldDelegate {
     
     var imagePicker: ImagePicker!
     var spinner = SpinnerViewController()
+
     
     @IBOutlet weak var name: UITextField!
     @IBOutlet weak var username: UITextField!
     @IBOutlet weak var email: UITextField!
     @IBOutlet weak var password: UITextField!
+
     @IBOutlet weak var confirmPassword : UITextField!
     
     @IBOutlet weak var profilePicture: UIImageView!
     
     
+
     @IBAction func directToLogin(_ sender: Any) {
     }
     @IBAction func selectProfilePicture(_ sender: UIButton) {
         self.imagePicker.present(from: sender)
     }
  
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
@@ -249,6 +254,7 @@ class SignUpViewController: UIViewController,UITextFieldDelegate {
         
     }
     
+
     
 
 }//end class
