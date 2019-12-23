@@ -9,21 +9,57 @@
 import UIKit
 import FirebaseAuth
 
-class LoginViewController: UIViewController {
+
+class LoginViewController: UIViewController,UITextFieldDelegate {
     @IBOutlet weak var email: UITextField!
     @IBOutlet weak var password: UITextField!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        self.autoredirect()
+        self.autofill()
+        
+        let fields = [email,password]
+        
+        for field in fields {
+            field?.delegate = self
+        }
+        
     }
     
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    
+    func autofill(){
+        self.email.text = "abhi@gmail.com"
+        self.password.text = "123456"
+    }
+    
+    
+    func autoredirect(){
+        
+        if let creds = Utilities.singleton.load() {
+            
+            if let email = creds[UserFields.email.rawValue], let userId = creds[UserFields.userId.rawValue] {
+                
+                self.redirect()
+            }
+            
+        }
+        
+    }
+    
+    func redirect(){
+        self.present(UINavigationController(rootViewController: TabBar()), animated: true)
+    }
+    
+    
     @IBAction func login(_ sender: Any) {
-        guard let userUid = Auth.auth().currentUser?.uid else { return }
-        print(userUid)
-        UserDefaults.standard.set(userUid, forKey: "uid")
-        
-        
+
         
         if self.email.text == "" || self.password.text == "" {
             
@@ -38,25 +74,35 @@ class LoginViewController: UIViewController {
             
         } else {
             
-            Auth.auth().signIn(withEmail: self.email.text!, password: self.password.text!) { (user, error) in
+
+         Auth.auth().signIn(withEmail: self.email.text!, password: self.password.text!) { user,error in
+
                 
                 if error == nil {
                     
                     //Print into the console if successfully logged in
                     print("You have successfully logged in")
-                    UserDefaults.standard.set(self.email.text, forKey: "email")
-                   
-                  
+
+                    FirebaseService.shared.getUserIDFromEmail(email: self.email.text!, completion: { userId, error in
+                        
+                        if error == nil && userId != nil {
+                            print("Saving to persistent storage!")
+                            Utilities.singleton.save(email: self.email.text!, userId: userId!)
+                            self.redirect()
+                        }
+                    })
                     
-                    //Go to the HomeViewController if the login is sucessful
-                    let vc = self.storyboard?.instantiateViewController(withIdentifier: "CreatePostViewController")
-                    self.present(vc!, animated: true, completion: nil)
+
                     print("logged in :)")
                     
                 } else {
                     
                     //Tells the user that there is an error and then gets firebase to tell them the error
-                    let alertController = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: .alert)
+
+                    let alertController = UIAlertController(title: "Error", message: "Auth error:Couldnt login", preferredStyle: .alert)
+                    
+                    print("Auth error",error?.localizedDescription)
+
                     
                     let defaultAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
                     alertController.addAction(defaultAction)
@@ -67,20 +113,6 @@ class LoginViewController: UIViewController {
         }
     }
     
-    
-//    @IBAction func logOutAction(sender: AnyObject) {
-//        if FIRAuth.auth()?.currentUser != nil {
-//            do {
-//                try FIRAuth.auth()?.signOut()
-//                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SignUp")
-//                present(vc, animated: true, completion: nil)
-//
-//            } catch let error as NSError {
-//                print(error.localizedDescription)
-//            }
-//        }
-//    }
-
 
 
 }// end class
